@@ -1,0 +1,61 @@
+{
+  "expo": {
+    "name": "KDO Cameroun",
+    "slug": "kdo-cameroun",
+    "owner": "socialboost237",
+    "version": "1.3.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "kdocameroun",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/6a4ba974-0b80-4123-b6a3-f472aba06754",
+      "enabled": true,
+      "fallbackToCacheTimeout": 0,
+      "checkAutomatically": "ON_LOAD"
+    },
+    "splash": {
+      "image": "./assets/images/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1565C0"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.socialboost237.kdocameroun"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/icon.png",
+        "backgroundColor": "#1565C0"
+      },
+      "package": "com.socialboost237.kdocameroun",
+      "versionCode": 4
+    },
+    "web": {
+      "favicon": "./assets/images/icon.png"
+    },
+    "plugins": [
+      [
+        "expo-router",
+        {
+          "origin": "https://replit.com/"
+        }
+      ],
+      "expo-font",
+      "expo-web-browser",
+      "expo-updates"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "6a4ba974-0b80-4123-b6a3-f472aba06754"
+      }
+    }
+  }
+}

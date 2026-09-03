@@ -1,0 +1,1519 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - KDO CAMEROUN Marketplace</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS personnalisé -->
+    <style>
+        :root {
+            --primary-orange: #FF6B00;
+            --secondary-blue: #0066CC;
+            --accent-gray: #F5F5F5;
+            --text-dark: #333333;
+            --text-medium: #666666;
+            --text-light: #999999;
+            --border-color: #E0E0E0;
+            --white: #FFFFFF;
+            --shadow: 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-hover: 0 3px 10px rgba(0,0,0,0.1);
+            --success-green: #52C41A;
+            --danger-red: #FF4D4F;
+            --step-inactive: #E0E0E0;
+            --step-active: #FF6B00;
+            --step-completed: #52C41A;
+        }
+        
+        * {
+            font-size: 12px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--white);
+            color: var(--text-dark);
+            padding-bottom: 50px;
+        }
+        
+        /* Header simplifié */
+        .header-kdo {
+            border-bottom: 1px solid var(--border-color);
+            background: var(--white);
+            padding: 8px 0;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .logo-img {
+            height: 32px;
+            width: auto;
+            object-fit: contain;
+        }
+        
+        .logo-text {
+            color: var(--primary-orange);
+            font-weight: 700;
+            font-size: 16px;
+            letter-spacing: -0.5px;
+        }
+        
+        /* Stepper (étapes) */
+        .contact-stepper {
+            background: var(--white);
+            border-bottom: 1px solid var(--border-color);
+            padding: 16px 0;
+            margin-bottom: 16px;
+        }
+        
+        .stepper-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .stepper {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+        }
+        
+        .stepper:before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 5%;
+            width: 90%;
+            height: 2px;
+            background-color: var(--step-inactive);
+            z-index: 1;
+        }
+        
+        .stepper-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 2;
+            position: relative;
+            flex: 1;
+            max-width: 25%;
+        }
+        
+        .step-icon {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: var(--step-inactive);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 11px;
+            transition: all 0.3s ease;
+        }
+        
+        .step-label {
+            font-size: 10px;
+            color: var(--text-medium);
+            font-weight: 500;
+            text-align: center;
+            padding: 0 5px;
+        }
+        
+        .step-active .step-icon {
+            background: var(--step-active);
+            box-shadow: 0 0 0 4px rgba(255, 107, 0, 0.1);
+        }
+        
+        .step-completed .step-icon {
+            background: var(--step-completed);
+        }
+        
+        .step-completed .step-icon i {
+            font-size: 10px;
+        }
+        
+        /* Conteneur principal */
+        .contact-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 12px;
+        }
+        
+        .contact-card {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        .contact-header {
+            background: var(--accent-gray);
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .contact-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .contact-body {
+            padding: 20px 16px;
+        }
+        
+        /* Étape 1: Sélection de la ville */
+        .cities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .city-card {
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: var(--white);
+        }
+        
+        .city-card:hover {
+            border-color: var(--primary-orange);
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
+        }
+        
+        .city-card.selected {
+            border-color: var(--primary-orange);
+            background-color: rgba(255, 107, 0, 0.05);
+        }
+        
+        .city-icon {
+            font-size: 20px;
+            color: var(--primary-orange);
+            margin-bottom: 8px;
+        }
+        
+        .city-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+        
+        .city-desc {
+            font-size: 10px;
+            color: var(--text-medium);
+        }
+        
+        /* Étape 2: Raison du contact */
+        .reasons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .reason-card {
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: var(--white);
+            text-align: center;
+        }
+        
+        .reason-card:hover {
+            border-color: var(--primary-orange);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .reason-card.selected {
+            border-color: var(--primary-orange);
+            background-color: rgba(255, 107, 0, 0.05);
+        }
+        
+        .reason-icon {
+            font-size: 24px;
+            color: var(--primary-orange);
+            margin-bottom: 10px;
+        }
+        
+        .reason-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+        }
+        
+        .reason-desc {
+            font-size: 11px;
+            color: var(--text-medium);
+            line-height: 1.4;
+        }
+        
+        /* Champ texte personnalisé */
+        .custom-reason-container {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--accent-gray);
+            display: none; /* Caché par défaut */
+        }
+        
+        .custom-reason-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .custom-reason-input {
+            width: 100%;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 10px 12px;
+            font-size: 12px;
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .custom-reason-input:focus {
+            border-color: var(--primary-orange);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(255, 107, 0, 0.1);
+        }
+        
+        /* Étape 3: Liste des agents */
+        .agent-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .agent-card {
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--white);
+        }
+        
+        .agent-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .agent-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--accent-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-orange);
+            font-size: 16px;
+        }
+        
+        .agent-details h4 {
+            font-size: 13px;
+            font-weight: 600;
+            margin: 0 0 4px 0;
+            color: var(--text-dark);
+        }
+        
+        .agent-details p {
+            font-size: 11px;
+            color: var(--text-medium);
+            margin: 0;
+        }
+        
+        .agent-phone {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            color: var(--text-medium);
+            margin-top: 4px;
+        }
+        
+        .whatsapp-btn {
+            background-color: #25D366;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 16px;
+            font-size: 11px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        
+        .whatsapp-btn:hover {
+            background-color: #1da851;
+            color: white;
+            text-decoration: none;
+        }
+        
+        /* Étape 4: Confirmation */
+        .confirmation-box {
+            text-align: center;
+            padding: 30px 20px;
+        }
+        
+        .confirmation-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--success-green);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin: 0 auto 15px;
+        }
+        
+        .confirmation-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+        
+        .confirmation-text {
+            font-size: 12px;
+            color: var(--text-medium);
+            margin-bottom: 20px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* Résumé de contact */
+        .contact-summary {
+            background: var(--accent-gray);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--primary-orange);
+        }
+        
+        .summary-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .summary-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        
+        .summary-item {
+            font-size: 12px;
+            color: var(--text-dark);
+        }
+        
+        .summary-label {
+            font-weight: 600;
+            color: var(--text-medium);
+            margin-bottom: 4px;
+        }
+        
+        .summary-value {
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+        
+        /* Informations produit */
+        .product-info-box {
+            background: var(--accent-gray);
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 20px;
+            border-left: 3px solid var(--primary-orange);
+        }
+        
+        .product-info-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+        
+        .product-details {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .product-image-small {
+            width: 50px;
+            height: 50px;
+            border-radius: 4px;
+            object-fit: cover;
+            background: var(--white);
+            padding: 5px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .product-text-info {
+            flex: 1;
+        }
+        
+        .product-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+        
+        .product-id {
+            font-size: 10px;
+            color: var(--text-medium);
+            margin-bottom: 4px;
+        }
+        
+        .product-price {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--primary-orange);
+        }
+        
+        /* Boutons de navigation */
+        .contact-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .btn-prev {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            color: var(--text-dark);
+            border-radius: 4px;
+            padding: 8px 16px;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn-prev:hover {
+            background: var(--accent-gray);
+            border-color: var(--text-medium);
+        }
+        
+        .btn-next, .btn-finish {
+            background: var(--primary-orange);
+            border: 1px solid var(--primary-orange);
+            color: white;
+            border-radius: 4px;
+            padding: 8px 24px;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn-next:hover, .btn-finish:hover {
+            background: #e65c00;
+            border-color: #e65c00;
+        }
+        
+        .btn-next:disabled, .btn-finish:disabled {
+            background: var(--text-light);
+            border-color: var(--text-light);
+            cursor: not-allowed;
+        }
+        
+        /* Footer avec navigation fonctionnelle */
+        .footer-kdo {
+            background: var(--white);
+            border-top: 1px solid var(--border-color);
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            padding: 8px 0;
+            z-index: 1000;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .footer-nav {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        
+        .footer-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-medium);
+            transition: all 0.2s;
+            padding: 4px;
+            min-width: 60px;
+            position: relative;
+        }
+        
+        .footer-item:hover,
+        .footer-item.active {
+            color: var(--primary-orange);
+            text-decoration: none;
+        }
+        
+        .footer-icon {
+            font-size: 18px;
+            margin-bottom: 2px;
+        }
+        
+        .footer-label {
+            font-size: 10px;
+            font-weight: 500;
+        }
+        
+        .cart-count-badge {
+            position: absolute;
+            top: 0;
+            right: 5px;
+            background: var(--primary-orange);
+            color: white;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: bold;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .cities-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+            
+            .reasons-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .agent-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            
+            .whatsapp-btn {
+                align-self: flex-end;
+            }
+            
+            .step-label {
+                font-size: 9px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .cities-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .contact-title {
+                font-size: 13px;
+            }
+            
+            .summary-details {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header simplifié -->
+    <header class="header-kdo">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <!-- Logo -->
+                <a href="dashboard.html" class="logo-container text-decoration-none">
+                    <img src="https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/logos.png" 
+                         alt="KDO CAMEROUN" 
+                         class="logo-img">
+                    <span class="logo-text">KDO CAMEROUN</span>
+                </a>
+                
+                <!-- Barre de recherche -->
+                <div class="search-wrapper" style="max-width: 300px;">
+                    <input type="text" class="search-input" placeholder="Rechercher produits, fournisseurs...">
+                    <button class="search-btn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Stepper (étapes) -->
+    <div class="contact-stepper">
+        <div class="container">
+            <div class="stepper-container">
+                <div class="stepper">
+                    <div class="stepper-step step-active" id="step1">
+                        <div class="step-icon">1</div>
+                        <div class="step-label">Sélectionnez votre ville</div>
+                    </div>
+                    <div class="stepper-step" id="step2">
+                        <div class="step-icon">2</div>
+                        <div class="step-label">Raison du contact</div>
+                    </div>
+                    <div class="stepper-step" id="step3">
+                        <div class="step-icon">3</div>
+                        <div class="step-label">Choisissez un agent</div>
+                    </div>
+                    <div class="stepper-step" id="step4">
+                        <div class="step-icon">4</div>
+                        <div class="step-label">Contact WhatsApp</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="container">
+        <div class="contact-container">
+            <!-- Carte de contact -->
+            <div class="contact-card">
+                <div class="contact-header">
+                    <h1 class="contact-title">
+                        <i class="fas fa-headset" style="color: var(--primary-orange);"></i>
+                        <span id="stepTitle">Sélectionnez votre ville</span>
+                    </h1>
+                </div>
+                
+                <div class="contact-body">
+                    <!-- Informations produit (si disponibles) -->
+                    <div id="productInfoContainer" style="display: none;">
+                        <div class="product-info-box">
+                            <div class="product-info-title">Produit sélectionné</div>
+                            <div class="product-details">
+                                <img src="https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/89_1.jpg" 
+                                     alt="Produit" 
+                                     class="product-image-small" 
+                                     id="productImage">
+                                <div class="product-text-info">
+                                    <div class="product-name" id="productName">Produit</div>
+                                    <div class="product-id">ID: <span id="productId">--</span></div>
+                                    <div class="product-price" id="productPrice">-- FCFA</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Étape 1: Sélection de la ville -->
+                    <div id="step1Content" class="step-content">
+                        <p style="font-size: 12px; color: var(--text-medium); margin-bottom: 20px;">
+                            Veuillez sélectionner votre ville pour afficher les agents disponibles près de chez vous.
+                        </p>
+                        
+                        <div class="cities-grid" id="citiesGrid">
+                            <!-- Villes chargées dynamiquement -->
+                        </div>
+                    </div>
+                    
+                    <!-- Étape 2: Raison du contact -->
+                    <div id="step2Content" class="step-content" style="display: none;">
+                        <div id="selectedCityInfo" style="margin-bottom: 20px;">
+                            <p style="font-size: 12px; color: var(--text-dark); margin-bottom: 8px;">
+                                <strong>Ville sélectionnée :</strong> <span id="selectedCityName">--</span>
+                            </p>
+                            <p style="font-size: 11px; color: var(--text-medium); margin-bottom: 20px;">
+                                Veuillez sélectionner la raison principale de votre contact.
+                            </p>
+                        </div>
+                        
+                        <div class="reasons-grid" id="reasonsGrid">
+                            <!-- Raisons chargées dynamiquement -->
+                        </div>
+                        
+                        <div class="custom-reason-container" id="customReasonContainer">
+                            <label class="custom-reason-label">Autre raison (précisez) :</label>
+                            <textarea class="custom-reason-input" id="customReason" placeholder="Décrivez la raison de votre contact..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Étape 3: Liste des agents -->
+                    <div id="step3Content" class="step-content" style="display: none;">
+                        <div class="contact-summary">
+                            <div class="summary-title">
+                                <i class="fas fa-clipboard-check"></i>
+                                Récapitulatif
+                            </div>
+                            <div class="summary-details">
+                                <div class="summary-item">
+                                    <div class="summary-label">Ville</div>
+                                    <div class="summary-value" id="summaryCity">--</div>
+                                </div>
+                                <div class="summary-item">
+                                    <div class="summary-label">Raison du contact</div>
+                                    <div class="summary-value" id="summaryReason">--</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <p style="font-size: 12px; color: var(--text-medium); margin-bottom: 20px;">
+                            Sélectionnez l'agent que vous souhaitez contacter dans la ville de <strong id="cityForAgents">--</strong>.
+                        </p>
+                        
+                        <div class="agent-list" id="agentsList">
+                            <!-- Agents chargés dynamiquement -->
+                        </div>
+                    </div>
+                    
+                    <!-- Étape 4: Confirmation -->
+                    <div id="step4Content" class="step-content" style="display: none;">
+                        <div class="confirmation-box">
+                            <div class="confirmation-icon">
+                                <i class="fab fa-whatsapp"></i>
+                            </div>
+                            <h2 class="confirmation-title">Prêt à contacter l'agent !</h2>
+                            
+                            <div class="contact-summary" style="text-align: left; margin-bottom: 25px;">
+                                <div class="summary-title">
+                                    <i class="fas fa-clipboard-list"></i>
+                                    Détails de votre demande
+                                </div>
+                                <div class="summary-details">
+                                    <div class="summary-item">
+                                        <div class="summary-label">Ville</div>
+                                        <div class="summary-value" id="finalCity">--</div>
+                                    </div>
+                                    <div class="summary-item">
+                                        <div class="summary-label">Raison</div>
+                                        <div class="summary-value" id="finalReason">--</div>
+                                    </div>
+                                    <div class="summary-item">
+                                        <div class="summary-label">Agent</div>
+                                        <div class="summary-value" id="finalAgent">--</div>
+                                    </div>
+                                    <div class="summary-item">
+                                        <div class="summary-label">Produit</div>
+                                        <div class="summary-value" id="finalProduct">--</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <p class="confirmation-text">
+                                Cliquez sur le bouton ci-dessous pour ouvrir WhatsApp et contacter <strong id="agentNameContact">l'agent</strong>.
+                            </p>
+                            
+                            <div style="margin-bottom: 25px;">
+                                <a id="whatsappFinalLink" href="#" class="whatsapp-btn" style="padding: 12px 24px; font-size: 14px;">
+                                    <i class="fab fa-whatsapp"></i> Ouvrir WhatsApp
+                                </a>
+                            </div>
+                            
+                            <p style="font-size: 10px; color: var(--text-light);">
+                                Numéro de l'agent : <strong id="agentPhoneDisplay">--</strong>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Navigation -->
+                    <div class="contact-navigation">
+                        <button class="btn-prev" id="btnPrev" style="display: none;">
+                            <i class="fas fa-arrow-left"></i> Précédent
+                        </button>
+                        <div style="flex: 1;"></div>
+                        <button class="btn-next" id="btnNext" disabled>
+                            Suivant <i class="fas fa-arrow-right"></i>
+                        </button>
+                        <button class="btn-finish" id="btnFinish" style="display: none;">
+                            Terminer <i class="fas fa-check"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer avec navigation fonctionnelle -->
+    <footer class="footer-kdo">
+        <div class="container">
+            <nav class="footer-nav">
+                <a href="dashboard.html" class="footer-item">
+                    <i class="fas fa-home footer-icon"></i>
+                    <span class="footer-label">Accueil</span>
+                </a>
+                <a href="promotion.html" class="footer-item">
+                    <i class="fas fa-tags footer-icon"></i>
+                    <span class="footer-label">Promotions</span>
+                </a>
+                <a href="boutique.html" class="footer-item">
+                    <i class="fas fa-store footer-icon"></i>
+                    <span class="footer-label">Boutique</span>
+                </a>
+                <a href="panier.html" class="footer-item">
+                    <i class="fas fa-shopping-cart footer-icon"></i>
+                    <span class="footer-label">Panier</span>
+                    <span id="footerCartCount" class="cart-count-badge">0</span>
+                </a>
+                <a href="profil.html" class="footer-item active">
+                    <i class="far fa-user footer-icon"></i>
+                    <span class="footer-label">Mon KDO</span>
+                </a>
+            </nav>
+        </div>
+    </footer>
+
+    <!-- Bootstrap & jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Script principal -->
+    <script>
+        // Données des villes et agents
+        const citiesData = {
+            'BERTOUA': {
+                name: 'BERTOUA',
+                icon: 'fas fa-city',
+                description: 'Capitale de la région de l\'Est',
+                agents: [
+                    { name: 'KDO NUMERICA', phone: '681144638', available: true },
+                    { name: 'KDO HORIZON', phone: '653386735', available: true },
+                    { name: 'KDO ACCESS', phone: '678338218', available: true }
+                ]
+            },
+            'YAOUNDÉ': {
+                name: 'YAOUNDÉ',
+                icon: 'fas fa-landmark',
+                description: 'Capitale politique',
+                agents: [
+                    { name: 'CHEZ KDO', phone: '658327321', available: true },
+                    { name: 'KDO TABTOUCH', phone: '672472604', available: true }
+                ]
+            },
+            'DOUALA': {
+                name: 'DOUALA',
+                icon: 'fas fa-ship',
+                description: 'Capitale économique',
+                agents: [
+                    { name: 'KDO SERVICE', phone: '656312299', available: true }
+                ]
+            },
+            'DSCHANG': {
+                name: 'DSCHANG',
+                icon: 'fas fa-university',
+                description: 'Ville universitaire',
+                agents: [
+                    { name: 'KDO TECHNO', phone: '676255068', available: true }
+                ]
+            },
+            'MAROUA': {
+                name: 'MAROUA',
+                icon: 'fas fa-mosque',
+                description: 'Capitale de l\'Extrême-Nord',
+                agents: [
+                    { name: 'KDO VISION', phone: '683533234', available: true },
+                    { name: 'KDO SAHEL', phone: '690280191', available: true }
+                ]
+            },
+            'GAROUA': {
+                name: 'GAROUA',
+                icon: 'fas fa-sun',
+                description: 'Capitale du Nord',
+                agents: [
+                    { name: 'Mr Idriss', phone: '692265070', available: true }
+                ]
+            },
+            'BAFOUSSAM': {
+                name: 'BAFOUSSAM',
+                icon: 'fas fa-mountain',
+                description: 'Capitale de l\'Ouest',
+                agents: [
+                    { name: 'Flore', phone: '674056142', available: true }
+                ]
+            },
+            'NGAOUNDERÉ': {
+                name: 'NGAOUNDERÉ',
+                icon: 'fas fa-train',
+                description: 'Capitale de l\'Adamaoua',
+                agents: [
+                    { name: 'Maxime', phone: '690072808', available: true }
+                ]
+            },
+            'AUTRES VILLES': {
+                name: 'AUTRES VILLES',
+                icon: 'fas fa-map-marker-alt',
+                description: 'Autres localités',
+                agents: [
+                    { name: 'BONUS', phone: '658393359', available: true },
+                    { name: 'TABTOUCH', phone: '672472604', available: true }
+                ]
+            }
+        };
+
+        // Raisons de contact
+        const contactReasons = [
+            {
+                id: 'order',
+                title: 'Commander un produit',
+                description: 'Je souhaite commander ce produit',
+                icon: 'fas fa-shopping-cart'
+            },
+            {
+                id: 'store',
+                title: 'Visiter la boutique',
+                description: 'Je veux visiter la boutique physique',
+                icon: 'fas fa-store'
+            },
+            {
+                id: 'delivery',
+                title: 'Livraison/Expédition',
+                description: 'Questions sur la livraison ou suivi de commande',
+                icon: 'fas fa-truck'
+            },
+            {
+                id: 'info',
+                title: 'Informations produit',
+                description: 'Besoin de plus d\'informations sur ce produit',
+                icon: 'fas fa-info-circle'
+            },
+            {
+                id: 'price',
+                title: 'Négociation de prix',
+                description: 'Je veux discuter du prix ou obtenir une réduction',
+                icon: 'fas fa-tag'
+            },
+            {
+                id: 'warranty',
+                title: 'Garantie & SAV',
+                description: 'Questions sur la garantie ou service après-vente',
+                icon: 'fas fa-shield-alt'
+            },
+            {
+                id: 'technical',
+                title: 'Support technique',
+                description: 'Problème technique avec le produit',
+                icon: 'fas fa-tools'
+            },
+            {
+                id: 'other',
+                title: 'Autre',
+                description: 'Autre raison non listée',
+                icon: 'fas fa-ellipsis-h'
+            }
+        ];
+
+        // Variables d'état
+        let currentStep = 1;
+        let selectedCity = null;
+        let selectedReason = null;
+        let selectedAgent = null;
+        let productInfo = null;
+        let customReasonText = '';
+
+        // Récupérer les paramètres de l'URL
+        function getUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            const productId = params.get('product');
+            const productName = params.get('productName');
+            const productPrice = params.get('productPrice');
+            
+            return {
+                productId: productId || 'N/A',
+                productName: productName || 'Produit non spécifié',
+                productPrice: productPrice || '--'
+            };
+        }
+
+        // Initialiser les informations produit
+        function initProductInfo() {
+            productInfo = getUrlParams();
+            
+            // Afficher les informations produit si disponibles
+            if (productInfo.productId !== 'N/A') {
+                $('#productInfoContainer').show();
+                $('#productId').text(productInfo.productId);
+                $('#productName').text(productInfo.productName);
+                $('#productPrice').text(productInfo.productPrice);
+                
+                // Pour la dernière étape
+                $('#finalProduct').text(productInfo.productName);
+            }
+        }
+
+        // Formater un numéro de téléphone - CORRECTION DU BUG
+        function formatPhoneNumber(phone) {
+            // S'assurer que phone est une chaîne de caractères
+            const phoneStr = String(phone);
+            
+            // Enlever les espaces et caractères non numériques
+            const cleaned = phoneStr.replace(/\D/g, '');
+            
+            // Si le numéro commence par +237, le garder tel quel
+            if (cleaned.startsWith('237')) {
+                return '+' + cleaned;
+            }
+            
+            // Si c'est un numéro à 9 chiffres, ajouter +237
+            if (cleaned.length === 9) {
+                return '+237' + cleaned;
+            }
+            
+            // Pour les autres formats, retourner tel quel avec un +
+            if (cleaned.length > 0) {
+                return '+' + cleaned;
+            }
+            
+            return phoneStr;
+        }
+
+        // Générer le message WhatsApp
+        function generateWhatsAppMessage(agentName, productName, productId, city, reason, customReason) {
+            let message = `Bonjour ${agentName}, \n\n`;
+            message += `Je suis intéressé(e) par le produit suivant sur KDO CAMEROUN :\n`;
+            message += `• Produit : ${productName}\n`;
+            message += `• ID : ${productId}\n`;
+            message += `• Ville : ${city}\n\n`;
+            
+            // Ajouter la raison du contact
+            message += `Raison du contact : ${reason}`;
+            
+            // Si c'est "Autre" et qu'il y a une raison personnalisée
+            if (reason === 'Autre' && customReason && customReason.trim() !== '') {
+                message += `\nDétails : ${customReason}`;
+            }
+            
+            message += `\n\nJe souhaite avoir plus d'informations. Merci !`;
+            
+            return encodeURIComponent(message);
+        }
+
+        // Générer le lien WhatsApp
+        function generateWhatsAppLink(phone, message) {
+            const formattedPhone = formatPhoneNumber(phone);
+            console.log("Numéro formaté:", formattedPhone);
+            console.log("Message:", decodeURIComponent(message));
+            return `https://wa.me/${formattedPhone}?text=${message}`;
+        }
+
+        // Afficher l'étape
+        function showStep(step) {
+            // Masquer toutes les étapes
+            $('.step-content').hide();
+            
+            // Mettre à jour le stepper
+            $('.stepper-step').removeClass('step-active step-completed');
+            
+            // Marquer les étapes précédentes comme complétées
+            for (let i = 1; i < step; i++) {
+                $(`#step${i}`).addClass('step-completed');
+                $(`#step${i} .step-icon`).html('<i class="fas fa-check"></i>');
+            }
+            
+            // Marquer l'étape actuelle comme active
+            $(`#step${step}`).addClass('step-active');
+            
+            // Afficher le contenu de l'étape
+            $(`#step${step}Content`).show();
+            
+            // Mettre à jour le titre
+            updateStepTitle(step);
+            
+            // Mettre à jour les boutons de navigation
+            updateNavigationButtons(step);
+            
+            // Mettre à jour l'étape courante
+            currentStep = step;
+            
+            // Gestion spécifique pour l'étape 2
+            if (step === 2) {
+                if (selectedReason === 'other') {
+                    $('#customReasonContainer').show();
+                } else {
+                    $('#customReasonContainer').hide();
+                }
+            }
+        }
+
+        // Mettre à jour le titre de l'étape
+        function updateStepTitle(step) {
+            const titles = {
+                1: 'Sélectionnez votre ville',
+                2: 'Raison du contact',
+                3: 'Choisissez un agent',
+                4: 'Contact via WhatsApp'
+            };
+            
+            $('#stepTitle').text(titles[step] || 'Contact');
+        }
+
+        // Mettre à jour les boutons de navigation
+        function updateNavigationButtons(step) {
+            // Bouton précédent
+            if (step > 1) {
+                $('#btnPrev').show();
+            } else {
+                $('#btnPrev').hide();
+            }
+            
+            // Bouton suivant/finish
+            if (step < 4) {
+                $('#btnNext').show();
+                $('#btnFinish').hide();
+                
+                // Activer/désactiver le bouton suivant
+                if ((step === 1 && selectedCity) || 
+                    (step === 2 && selectedReason) || 
+                    (step === 3 && selectedAgent)) {
+                    $('#btnNext').prop('disabled', false);
+                } else {
+                    $('#btnNext').prop('disabled', true);
+                }
+            } else {
+                $('#btnNext').hide();
+                $('#btnFinish').show();
+            }
+        }
+
+        // Rendre les villes
+        function renderCities() {
+            const citiesGrid = $('#citiesGrid');
+            citiesGrid.empty();
+            
+            Object.keys(citiesData).forEach(cityKey => {
+                const city = citiesData[cityKey];
+                const isSelected = selectedCity === cityKey;
+                
+                const cityCard = `
+                    <div class="city-card ${isSelected ? 'selected' : ''}" data-city="${cityKey}">
+                        <div class="city-icon">
+                            <i class="${city.icon}"></i>
+                        </div>
+                        <div class="city-name">${city.name}</div>
+                        <div class="city-desc">${city.description}</div>
+                    </div>
+                `;
+                
+                citiesGrid.append(cityCard);
+            });
+            
+            // Ajouter les événements de clic
+            $('.city-card').on('click', function() {
+                const cityKey = $(this).data('city');
+                selectCity(cityKey);
+            });
+        }
+
+        // Sélectionner une ville
+        function selectCity(cityKey) {
+            selectedCity = cityKey;
+            
+            // Mettre à jour l'affichage
+            $('.city-card').removeClass('selected');
+            $(`.city-card[data-city="${cityKey}"]`).addClass('selected');
+            
+            // Mettre à jour les informations de ville
+            $('#selectedCityName').text(citiesData[cityKey].name);
+            $('#summaryCity').text(citiesData[cityKey].name);
+            $('#finalCity').text(citiesData[cityKey].name);
+            $('#cityForAgents').text(citiesData[cityKey].name);
+            
+            // Activer le bouton suivant
+            $('#btnNext').prop('disabled', false);
+        }
+
+        // Rendre les raisons de contact
+        function renderReasons() {
+            const reasonsGrid = $('#reasonsGrid');
+            reasonsGrid.empty();
+            
+            contactReasons.forEach(reason => {
+                const isSelected = selectedReason === reason.id;
+                
+                const reasonCard = `
+                    <div class="reason-card ${isSelected ? 'selected' : ''}" data-reason="${reason.id}">
+                        <div class="reason-icon">
+                            <i class="${reason.icon}"></i>
+                        </div>
+                        <div class="reason-title">${reason.title}</div>
+                        <div class="reason-desc">${reason.description}</div>
+                    </div>
+                `;
+                
+                reasonsGrid.append(reasonCard);
+            });
+            
+            // Ajouter les événements de clic
+            $('.reason-card').on('click', function() {
+                const reasonId = $(this).data('reason');
+                selectReason(reasonId);
+            });
+            
+            // Écouter les changements dans le champ texte personnalisé
+            $('#customReason').on('input', function() {
+                customReasonText = $(this).val();
+                
+                // Mettre à jour le résumé si la raison "Autre" est sélectionnée
+                if (selectedReason === 'other') {
+                    let reasonText = 'Autre';
+                    if (customReasonText.trim() !== '') {
+                        reasonText = `Autre : ${customReasonText.substring(0, 50)}${customReasonText.length > 50 ? '...' : ''}`;
+                    }
+                    
+                    $('#summaryReason').text(reasonText);
+                    $('#finalReason').text(reasonText);
+                }
+            });
+        }
+
+        // Sélectionner une raison
+        function selectReason(reasonId) {
+            selectedReason = reasonId;
+            
+            // Mettre à jour l'affichage
+            $('.reason-card').removeClass('selected');
+            $(`.reason-card[data-reason="${reasonId}"]`).addClass('selected');
+            
+            // Afficher ou masquer le champ de raison personnalisée
+            if (reasonId === 'other') {
+                $('#customReasonContainer').show();
+                // Focus sur le champ texte
+                setTimeout(() => {
+                    $('#customReason').focus();
+                }, 100);
+            } else {
+                $('#customReasonContainer').hide();
+            }
+            
+            // Trouver l'objet raison
+            const reasonObj = contactReasons.find(r => r.id === reasonId);
+            let reasonText = reasonObj ? reasonObj.title : 'Autre';
+            
+            // Si c'est "Autre" et qu'il y a du texte personnalisé
+            if (reasonId === 'other' && customReasonText.trim() !== '') {
+                reasonText = `Autre : ${customReasonText.substring(0, 50)}${customReasonText.length > 50 ? '...' : ''}`;
+            }
+            
+            // Mettre à jour les résumés
+            $('#summaryReason').text(reasonText);
+            $('#finalReason').text(reasonText);
+            
+            // Activer le bouton suivant
+            $('#btnNext').prop('disabled', false);
+        }
+
+        // Rendre les agents
+        function renderAgents() {
+            if (!selectedCity) return;
+            
+            const agentsList = $('#agentsList');
+            agentsList.empty();
+            
+            const city = citiesData[selectedCity];
+            
+            city.agents.forEach(agent => {
+                const isSelected = selectedAgent && selectedAgent.phone === agent.phone;
+                
+                const agentCard = `
+                    <div class="agent-card ${isSelected ? 'selected' : ''}" data-agent-phone="${agent.phone}">
+                        <div class="agent-info">
+                            <div class="agent-avatar">
+                                <i class="fas fa-user-tie"></i>
+                            </div>
+                            <div class="agent-details">
+                                <h4>${agent.name}</h4>
+                                <p>Agent KDO CAMEROUN - ${city.name}</p>
+                                <div class="agent-phone">
+                                    <i class="fas fa-phone"></i>
+                                    <span>+237 ${agent.phone}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="whatsapp-btn select-agent-btn" data-agent-name="${agent.name}" data-agent-phone="${agent.phone}">
+                            <i class="fab fa-whatsapp"></i> Sélectionner
+                        </button>
+                    </div>
+                `;
+                
+                agentsList.append(agentCard);
+            });
+            
+            // Ajouter les événements de clic
+            $('.select-agent-btn').on('click', function(e) {
+                e.preventDefault();
+                
+                const agentName = $(this).data('agent-name');
+                const agentPhone = $(this).data('agent-phone');
+                
+                selectAgent(agentName, agentPhone);
+                
+                // Sélectionner la carte
+                $('.agent-card').removeClass('selected');
+                $(this).closest('.agent-card').addClass('selected');
+            });
+        }
+
+        // Sélectionner un agent
+        function selectAgent(agentName, agentPhone) {
+            selectedAgent = {
+                name: agentName,
+                phone: agentPhone
+            };
+            
+            // Activer le bouton suivant
+            $('#btnNext').prop('disabled', false);
+            
+            // Mettre à jour les résumés
+            $('#finalAgent').text(agentName);
+            $('#agentNameContact').text(agentName);
+            $('#agentPhoneDisplay').text('+237 ' + agentPhone);
+            
+            // Préparer le lien WhatsApp
+            const reasonObj = contactReasons.find(r => r.id === selectedReason);
+            const reasonText = reasonObj ? reasonObj.title : 'Autre';
+            
+            const message = generateWhatsAppMessage(
+                agentName,
+                productInfo.productName,
+                productInfo.productId,
+                selectedCity,
+                reasonText,
+                customReasonText
+            );
+            
+            const whatsappLink = generateWhatsAppLink(agentPhone, message);
+            $('#whatsappFinalLink').attr('href', whatsappLink);
+            
+            console.log("Lien WhatsApp généré:", whatsappLink);
+        }
+
+        // Initialisation
+        $(document).ready(function() {
+            // Initialiser les informations produit
+            initProductInfo();
+            
+            // Afficher l'étape 1
+            showStep(1);
+            
+            // Rendre les villes
+            renderCities();
+            
+            // Rendre les raisons
+            renderReasons();
+            
+            // Gestion des boutons de navigation
+            $('#btnNext').on('click', function() {
+                if (currentStep === 1 && selectedCity) {
+                    showStep(2);
+                } else if (currentStep === 2 && selectedReason) {
+                    // Rendre les agents pour la ville sélectionnée
+                    renderAgents();
+                    showStep(3);
+                } else if (currentStep === 3 && selectedAgent) {
+                    showStep(4);
+                }
+            });
+            
+            $('#btnPrev').on('click', function() {
+                if (currentStep > 1) {
+                    showStep(currentStep - 1);
+                }
+            });
+            
+            $('#btnFinish').on('click', function() {
+                // Ouvrir WhatsApp dans un nouvel onglet
+                const whatsappLink = $('#whatsappFinalLink').attr('href');
+                if (whatsappLink && whatsappLink !== '#') {
+                    window.open(whatsappLink, '_blank');
+                    
+                    // Rediriger vers le tableau de bord après 2 secondes
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 2000);
+                } else {
+                    alert('Erreur : Impossible de générer le lien WhatsApp. Veuillez réessayer.');
+                }
+            });
+            
+            // Recherche
+            $('.search-btn').on('click', performSearch);
+            
+            $('.search-input').on('keyup', function(e) {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+            
+            function performSearch() {
+                const term = $('.search-input').val().toLowerCase().trim();
+                
+                if (term) {
+                    // Rediriger vers le dashboard avec le terme de recherche
+                    window.location.href = `dashboard.html?search=${encodeURIComponent(term)}`;
+                }
+            }
+            
+            // Navigation footer
+            $('.footer-item').on('click', function(e) {
+                // La navigation se fait via les liens href
+                // On met à jour l'état actif
+                $('.footer-item').removeClass('active');
+                $(this).addClass('active');
+            });
+            
+            // Charger le compteur du panier
+            loadCartCount();
+        });
+        
+        // Charger le compteur du panier
+        function loadCartCount() {
+            // Simuler un chargement du panier (dans un vrai cas, on irait chercher dans localStorage ou Firestore)
+            const cartCount = localStorage.getItem('cartCount') || 0;
+            $('#footerCartCount').text(cartCount);
+        }
+    </script>
+</body>
+</html>

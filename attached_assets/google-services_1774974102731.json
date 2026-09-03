@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "445876564547",
+    "project_id": "kdo-cameroun",
+    "storage_bucket": "kdo-cameroun.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:445876564547:android:3fdb128e983265d8bd1af6",
+        "android_client_info": {
+          "package_name": "com.kdo.cameroun"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "445876564547-2s83ll3r1h66u9ssfr2spr0at12q4tea.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBaTtt3-ZTnDXf8lacErgC53R_Lyd2LntU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "445876564547-2s83ll3r1h66u9ssfr2spr0at12q4tea.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Mes services - AfrikDigitalo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="main-header">
+        <div class="logo">
+            <img src="https://raw.githubusercontent.com/exaucenapopolo/AfrikDigitalo/refs/heads/main/Photo/ezgif-693a681e148aad8a.gif" alt="AfrikDigitalo">
+            <span>Afrik<span class="highlight">Digitalo</span></span>
+        </div>
+        <div class="header-user">
+            <span id="headerUserName">Utilisateur</span>
+            <img id="headerAvatar" src="https://randomuser.me/api/portraits/lego/1.jpg" alt="Avatar">
+            <button class="btn-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i></button>
+        </div>
+    </header>
+
+    <div class="dashboard">
+        <aside class="sidebar" id="sidebar">
+            <nav>
+                <ul id="sidebarNav"></ul>
+            </nav>
+        </aside>
+
+        <main class="main-content" id="mainContent">
+            <div id="verificationBanner" class="verification-banner" style="display: none;">
+                <p><i class="fas fa-exclamation-triangle"></i> Votre adresse email n'est pas encore vérifiée.</p>
+                <button id="resendVerificationBtn">Renvoyer l'email</button>
+            </div>
+
+            <button class="btn-add" onclick="openModal()"><i class="fas fa-plus"></i> Ajouter un service</button>
+            <div id="servicesList" class="services-grid">Chargement...</div>
+        </main>
+    </div>
+
+    <nav class="mobile-nav" id="mobileNav">
+        <ul id="mobileNavList"></ul>
+    </nav>
+
+    <!-- Modal pour ajouter/modifier service -->
+    <div class="modal" id="serviceModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+            <h3 id="modalTitle">Ajouter un service</h3>
+            <form id="serviceForm">
+                <div class="form-group">
+                    <label>Titre *</label>
+                    <input type="text" id="serviceTitle" required>
+                </div>
+                <div class="form-group">
+                    <label>Description *</label>
+                    <textarea id="serviceDesc" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Prix (FCFA) *</label>
+                    <input type="number" id="servicePrice" required>
+                </div>
+                <div class="form-group">
+                    <label>Catégorie *</label>
+                    <select id="serviceCategory" required></select>
+                </div>
+                <div class="form-group">
+                    <label>Délai de livraison (jours) *</label>
+                    <input type="number" id="serviceDelivery" value="3" required>
+                </div>
+                <div class="form-group">
+                    <label>Images (jusqu'à 2) - optionnel</label>
+                    <input type="file" id="serviceImage1" accept="image/*">
+                    <input type="file" id="serviceImage2" accept="image/*" style="margin-top:5px;">
+                    <div id="imagePreviewContainer" style="display: flex; gap:10px; margin-top:10px;"></div>
+                </div>
+                <div class="form-group">
+                    <label>Questions fréquentes (max 3)</label>
+                    <div id="faqContainer">
+                        <div class="faq-item" style="margin-bottom:10px;">
+                            <input type="text" id="faqQuestion1" placeholder="Question 1" style="width:48%; margin-right:2%;">
+                            <input type="text" id="faqAnswer1" placeholder="Réponse 1" style="width:48%;">
+                        </div>
+                        <div class="faq-item" style="margin-bottom:10px;">
+                            <input type="text" id="faqQuestion2" placeholder="Question 2" style="width:48%; margin-right:2%;">
+                            <input type="text" id="faqAnswer2" placeholder="Réponse 2" style="width:48%;">
+                        </div>
+                        <div class="faq-item" style="margin-bottom:10px;">
+                            <input type="text" id="faqQuestion3" placeholder="Question 3" style="width:48%; margin-right:2%;">
+                            <input type="text" id="faqAnswer3" placeholder="Réponse 3" style="width:48%;">
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn-save">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de confirmation -->
+    <div class="modal" id="confirmModal">
+        <div class="modal-content">
+            <h3>Confirmation</h3>
+            <p id="confirmMessage">Êtes-vous sûr ?</p>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn btn-primary" id="confirmYes">Oui</button>
+                <button class="btn btn-secondary" onclick="closeConfirmModal()">Non</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="logoutModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeLogoutModal()">&times;</span>
+            <h3>Confirmation</h3>
+            <p>Êtes-vous sûr de vouloir vous déconnecter ?</p>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn btn-primary" id="confirmLogout">Oui</button>
+                <button class="btn btn-secondary" onclick="closeLogoutModal()">Non</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="auth.js"></script>
+    <script>
+        let editingServiceId = null;
+        let uploadedImages = [];
+        let confirmCallback = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await requireAuth();
+            if (!userData) return;
+
+            if (userData.role !== 'creator') {
+                window.location.href = 'dashboard.html';
+                return;
+            }
+
+            const catSelect = document.getElementById('serviceCategory');
+            const categories = [
+                "Développement web", "Développement mobile", "Design graphique", "Illustration", "Logo design",
+                "UI/UX design", "Motion design", "Montage vidéo", "Animation 2D/3D", "Photographie",
+                "Rédaction web", "Copywriting", "Traduction", "Relecture", "Community management",
+                "Marketing digital", "SEO", "Publicité en ligne", "Email marketing", "Influence",
+                "Musique", "Composition", "Mixage audio", "Podcast", "Voix off",
+                "Conseil", "Coaching", "Formation en ligne", "E-learning", "Création de contenu",
+                "Gestion de projet", "Assistanat virtuel", "Saisie de données", "Transcription", "Recherche",
+                "Architecture", "Ingénierie", "Comptabilité", "Juridique", "Traductions techniques",
+                "Jeux vidéo", "Réalité virtuelle", "Intelligence artificielle", "Blockchain", "Cybersécurité",
+                "Réseaux", "Support technique", "Administration système", "Cloud computing", "Data science"
+            ];
+            catSelect.innerHTML = '<option value="">Sélectionnez</option>' + categories.map(c => `<option value="${c}">${c}</option>`).join('');
+
+            const sections = [
+                { id: 'dashboard', url: 'dashboard.html', icon: 'fas fa-home', label: 'Accueil' },
+                { id: 'services', url: 'services.html', icon: 'fas fa-list', label: 'Mes services' },
+                { id: 'orders', url: 'orders.html', icon: 'fas fa-shopping-bag', label: 'Commandes' },
+                { id: 'followers', url: 'followers.html', icon: 'fas fa-users', label: 'Abonnés' },
+                { id: 'profile', url: 'profile.html', icon: 'fas fa-user', label: 'Profil' },
+                { id: 'settings', url: 'settings.html', icon: 'fas fa-cog', label: 'Paramètres' }
+            ];
+            document.getElementById('sidebarNav').innerHTML = sections.map(s => `
+                <li><a href="${s.url}" class="${s.id === 'services' ? 'active' : ''}"><i class="${s.icon}"></i> ${s.label}</a></li>
+            `).join('');
+            document.getElementById('mobileNavList').innerHTML = sections.map(s => `
+                <li><a href="${s.url}" class="${s.id === 'services' ? 'active' : ''}"><i class="${s.icon}"></i> <span>${s.label}</span></a></li>
+            `).join('');
+
+            await loadServices();
+        });
+
+        async function loadServices() {
+            const listDiv = document.getElementById('servicesList');
+            const snapshot = await db.collection('services').where('creatorId', '==', currentUser.uid).get();
+            if (snapshot.empty) {
+                listDiv.innerHTML = '<p>Aucun service pour le moment.</p>';
+                return;
+            }
+            let html = '';
+            for (const doc of snapshot.docs) {
+                const s = doc.data();
+                const cartSnap = await db.collection('cart').where('serviceId', '==', doc.id).get();
+                const cartCount = cartSnap.size;
+                const favSnap = await db.collection('favorites').where('serviceId', '==', doc.id).get();
+                const favCount = favSnap.size;
+                const orderSnap = await db.collection('orders').where('serviceId', '==', doc.id).get();
+                const orderCount = orderSnap.size;
+
+                const imageHtml = s.images && s.images.length > 0 ? `<img src="${s.images[0]}" onclick="window.open('${s.images[0]}')" style="width:100%; height:150px; object-fit:cover; border-radius:5px; margin-bottom:10px; cursor:pointer;">` : '';
+
+                html += `
+                    <div class="service-card">
+                        ${imageHtml}
+                        <h3>${s.title}</h3>
+                        <p>${s.description.substring(0, 80)}...</p>
+                        <div class="service-price">${s.price} FCFA</div>
+                        <div><i class="fas fa-cart-plus"></i> ${cartCount} dans paniers</div>
+                        <div><i class="fas fa-heart"></i> ${favCount} favoris</div>
+                        <div><i class="fas fa-shopping-bag"></i> ${orderCount} vendus</div>
+                        <div class="service-actions">
+                            <button class="btn-edit" onclick="editService('${doc.id}')"><i class="fas fa-edit"></i> Modifier</button>
+                            <button class="btn-delete" onclick="confirmDeleteService('${doc.id}')"><i class="fas fa-trash"></i> Supprimer</button>
+                        </div>
+                    </div>
+                `;
+            }
+            listDiv.innerHTML = html;
+        }
+
+        window.openModal = function() {
+            editingServiceId = null;
+            document.getElementById('modalTitle').textContent = 'Ajouter un service';
+            document.getElementById('serviceForm').reset();
+            document.getElementById('imagePreviewContainer').innerHTML = '';
+            uploadedImages = [];
+            document.getElementById('faqQuestion1').value = '';
+            document.getElementById('faqAnswer1').value = '';
+            document.getElementById('faqQuestion2').value = '';
+            document.getElementById('faqAnswer2').value = '';
+            document.getElementById('faqQuestion3').value = '';
+            document.getElementById('faqAnswer3').value = '';
+            document.getElementById('serviceModal').classList.add('active');
+        };
+
+        window.closeModal = function() {
+            document.getElementById('serviceModal').classList.remove('active');
+        };
+
+        window.editService = async function(id) {
+            const doc = await db.collection('services').doc(id).get();
+            if (!doc.exists) return;
+            const s = doc.data();
+            editingServiceId = id;
+            document.getElementById('modalTitle').textContent = 'Modifier le service';
+            document.getElementById('serviceTitle').value = s.title;
+            document.getElementById('serviceDesc').value = s.description;
+            document.getElementById('servicePrice').value = s.price;
+            document.getElementById('serviceCategory').value = s.category;
+            document.getElementById('serviceDelivery').value = s.deliveryDays;
+            if (s.images && s.images.length) {
+                uploadedImages = s.images;
+                let previewHtml = '';
+                s.images.forEach((url, index) => {
+                    previewHtml += `<img src="${url}" style="width:100px; height:100px; object-fit:cover; border-radius:5px; margin-right:5px; cursor:pointer;" onclick="window.open('${url}')">`;
+                });
+                document.getElementById('imagePreviewContainer').innerHTML = previewHtml;
+            }
+            if (s.faq && s.faq.length) {
+                s.faq.forEach((item, i) => {
+                    if (i < 3) {
+                        document.getElementById(`faqQuestion${i+1}`).value = item.question || '';
+                        document.getElementById(`faqAnswer${i+1}`).value = item.answer || '';
+                    }
+                });
+            }
+            document.getElementById('serviceModal').classList.add('active');
+        };
+
+        window.confirmDeleteService = function(id) {
+            showConfirm('Supprimer ce service ?', async () => {
+                await db.collection('services').doc(id).delete();
+                showToast('Service supprimé', 'success');
+                loadServices();
+            });
+        };
+
+        async function uploadImage(file) {
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("upload_preset", "afrikdigitalo_upload");
+
+            const res = await fetch("https://api.cloudinary.com/v1_1/do83voiqy/image/upload", {
+                method: "POST",
+                body: formData
+            });
+            const data = await res.json();
+            return data.secure_url;
+        }
+
+        document.getElementById('serviceImage1').addEventListener('change', async function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            try {
+                const url = await uploadImage(file);
+                uploadedImages.push(url);
+                updateImagePreview();
+                showToast('Image 1 uploadée', 'success');
+            } catch (error) {
+                showToast('Erreur upload image 1', 'error');
+            }
+        });
+
+        document.getElementById('serviceImage2').addEventListener('change', async function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            try {
+                const url = await uploadImage(file);
+                uploadedImages.push(url);
+                updateImagePreview();
+                showToast('Image 2 uploadée', 'success');
+            } catch (error) {
+                showToast('Erreur upload image 2', 'error');
+            }
+        });
+
+        function updateImagePreview() {
+            let html = '';
+            uploadedImages.forEach(url => {
+                html += `<img src="${url}" style="width:100px; height:100px; object-fit:cover; border-radius:5px; margin-right:5px; cursor:pointer;" onclick="window.open('${url}')">`;
+            });
+            document.getElementById('imagePreviewContainer').innerHTML = html;
+        }
+
+        document.getElementById('serviceForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const title = document.getElementById('serviceTitle').value;
+            const desc = document.getElementById('serviceDesc').value;
+            const price = parseFloat(document.getElementById('servicePrice').value);
+            const category = document.getElementById('serviceCategory').value;
+            const delivery = parseInt(document.getElementById('serviceDelivery').value);
+
+            const faq = [];
+            for (let i = 1; i <= 3; i++) {
+                const q = document.getElementById(`faqQuestion${i}`).value;
+                const a = document.getElementById(`faqAnswer${i}`).value;
+                if (q && a) {
+                    faq.push({ question: q, answer: a });
+                }
+            }
+
+            if (!title || !desc || !price || !category) {
+                showToast('Veuillez remplir tous les champs obligatoires', 'error');
+                return;
+            }
+
+            const serviceData = {
+                creatorId: currentUser.uid,
+                title,
+                description: desc,
+                price,
+                category,
+                deliveryDays: delivery,
+                images: uploadedImages,
+                faq: faq,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            try {
+                if (editingServiceId) {
+                    await db.collection('services').doc(editingServiceId).update(serviceData);
+                    showToast('Service modifié', 'success');
+                } else {
+                    serviceData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                    await db.collection('services').add(serviceData);
+                    showToast('Service ajouté', 'success');
+                }
+                closeModal();
+                loadServices();
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        });
+
+        // Modal de confirmation
+        window.showConfirm = function(message, callback) {
+            document.getElementById('confirmMessage').textContent = message;
+            confirmCallback = callback;
+            document.getElementById('confirmModal').classList.add('active');
+        };
+        window.closeConfirmModal = function() {
+            document.getElementById('confirmModal').classList.remove('active');
+            confirmCallback = null;
+        };
+        document.getElementById('confirmYes').addEventListener('click', () => {
+            if (confirmCallback) {
+                confirmCallback();
+            }
+            closeConfirmModal();
+        });
+    </script>
+</body>
+</html>

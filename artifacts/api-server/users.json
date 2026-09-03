@@ -1,0 +1,31 @@
+[
+  {
+    "id": "265efd49-4688-458d-bcbb-d2d1b7cd5f3b",
+    "name": "Test User",
+    "email": "test@kdo.cm",
+    "passwordHash": "f343ba660302828700ea2d35b8238b2253d70d7ab0563d572f054f84c1dfd3aa",
+    "createdAt": "2026-03-31T14:16:00.486Z"
+  },
+  {
+    "id": "92e7e9b9-15ba-4763-adbc-77923ed4b9a0",
+    "name": "Mobile Test",
+    "email": "mobile@kdo.cm",
+    "passwordHash": "0502e30ffe8a105cb983ad1637c45f9a255710ecf84b3fc32bf855ef02bb35ee",
+    "createdAt": "2026-03-31T14:17:42.457Z"
+  },
+  {
+    "id": "b23a8126-3e01-43f2-8ade-0a89e969cc95",
+    "name": "Jean Kameni",
+    "email": "jean@exemple.cm",
+    "phone": "+237 699 111 222",
+    "passwordHash": "9c67e3229c097c0b5c568ca39956e57d00b1d9d358bbcd03227ee752179240cc",
+    "createdAt": "2026-03-31T14:20:19.835Z"
+  },
+  {
+    "id": "02307ad6-a728-469f-9f8e-1e89c749820a",
+    "name": "Marie Ngono",
+    "email": "marie@kdo.cm",
+    "passwordHash": "51c6d97eaa90bbf9f8bf044fbbbb8859a3bcd4e21ed911b6020ff461e72a5e44",
+    "createdAt": "2026-03-31T14:20:30.042Z"
+  }
+]

@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promotions - KDO CAMEROUN Marketplace</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS personnalisé -->
+    <style>
+        :root {
+            --primary-orange: #FF6B00;
+            --secondary-blue: #0066CC;
+            --accent-gray: #F5F5F5;
+            --text-dark: #333333;
+            --text-medium: #666666;
+            --text-light: #999999;
+            --border-color: #E0E0E0;
+            --white: #FFFFFF;
+            --shadow: 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-hover: 0 3px 10px rgba(0,0,0,0.1);
+            --success-green: #52C41A;
+            --danger-red: #FF4D4F;
+            --promo-red: #FF0000;
+            --promo-bg: #FFF8F3;
+        }
+        
+        * {
+            font-size: 12px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--white);
+            color: var(--text-dark);
+            padding-bottom: 50px;
+        }
+        
+        /* Header simplifié */
+        .header-kdo {
+            border-bottom: 1px solid var(--border-color);
+            background: var(--white);
+            padding: 8px 0;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .logo-img {
+            height: 32px;
+            width: auto;
+            object-fit: contain;
+        }
+        
+        .logo-text {
+            color: var(--primary-orange);
+            font-weight: 700;
+            font-size: 16px;
+            letter-spacing: -0.5px;
+        }
+        
+        /* Carrousel de promotions */
+        .promo-carousel-container {
+            background: linear-gradient(90deg, var(--promo-bg) 0%, #FFF 100%);
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 0;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 16px;
+        }
+        
+        .promo-carousel {
+            display: flex;
+            animation: slidePromo 25s infinite linear;
+            width: max-content;
+        }
+        
+        .promo-slide {
+            display: flex;
+            align-items: center;
+            padding: 8px 20px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        
+        .promo-badge {
+            background: var(--promo-red);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 10px;
+            margin-right: 10px;
+        }
+        
+        .promo-text {
+            color: var(--text-dark);
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .promo-price {
+            color: var(--promo-red);
+            font-weight: 700;
+            margin-left: 5px;
+        }
+        
+        @keyframes slidePromo {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+        
+        /* Barre de recherche */
+        .search-wrapper {
+            position: relative;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .search-input {
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 8px 40px 8px 12px;
+            font-size: 12px;
+            width: 100%;
+            height: 36px;
+        }
+        
+        .search-input:focus {
+            border-color: var(--primary-orange);
+            box-shadow: 0 0 0 2px rgba(255, 107, 0, 0.1);
+        }
+        
+        .search-btn {
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 100%;
+            background: var(--accent-gray);
+            color: var(--text-medium);
+            border: none;
+            border-radius: 0 4px 4px 0;
+            padding: 0 15px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        
+        .search-btn:hover {
+            background: var(--primary-orange);
+            color: white;
+        }
+        
+        /* Barre de catégories horizontale défilante */
+        .categories-scroll {
+            background: var(--accent-gray);
+            border-bottom: 1px solid var(--border-color);
+            padding: 8px 0;
+            margin-bottom: 16px;
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .categories-container {
+            display: inline-flex;
+            gap: 8px;
+            padding: 0 12px;
+        }
+        
+        .category-item {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 6px 12px;
+            color: var(--text-dark);
+            text-decoration: none;
+            font-size: 11px;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        
+        .category-item:hover,
+        .category-item.active {
+            background: var(--primary-orange);
+            color: white;
+            border-color: var(--primary-orange);
+        }
+        
+        .category-item i {
+            margin-right: 4px;
+            font-size: 11px;
+        }
+        
+        /* Titre des promotions */
+        .promo-title-section {
+            background: linear-gradient(90deg, var(--primary-orange), #FF8E00);
+            color: white;
+            padding: 15px 0;
+            margin-bottom: 20px;
+            text-align: center;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 4px 12px rgba(255, 107, 0, 0.2);
+        }
+        
+        .promo-title {
+            font-size: 24px;
+            font-weight: 800;
+            margin: 0;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+            letter-spacing: 0.5px;
+        }
+        
+        .promo-subtitle {
+            font-size: 14px;
+            margin: 5px 0 0 0;
+            opacity: 0.9;
+        }
+        
+        /* Conteneur principal */
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        /* Grille de promotions */
+        .promotions-grid {
+            flex: 1;
+        }
+        
+        .promotions-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        /* Carte promotion */
+        .promo-card {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--white);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        
+        .promo-card:hover {
+            border-color: var(--primary-orange);
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-5px);
+        }
+        
+        .promo-header {
+            position: relative;
+            height: 200px;
+            background: var(--accent-gray);
+            overflow: hidden;
+        }
+        
+        .promo-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .promo-card:hover .promo-image {
+            transform: scale(1.05);
+        }
+        
+        .promo-badges {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            display: flex;
+            justify-content: space-between;
+            z-index: 2;
+        }
+        
+        .badge-promo {
+            background: var(--promo-red);
+            color: white;
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .badge-stock {
+            background: var(--danger-red);
+            color: white;
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+        
+        .badge-timer {
+            background: var(--text-dark);
+            color: white;
+            font-size: 10px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+        }
+        
+        .promo-content {
+            padding: 16px;
+        }
+        
+        .promo-product-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+        
+        .promo-price-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--accent-gray);
+        }
+        
+        .promo-current-price {
+            color: var(--promo-red);
+            font-weight: 800;
+            font-size: 20px;
+        }
+        
+        .promo-old-price {
+            color: var(--text-light);
+            font-size: 14px;
+            text-decoration: line-through;
+        }
+        
+        .promo-discount {
+            background: var(--promo-red);
+            color: white;
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: bold;
+        }
+        
+        .promo-description {
+            font-size: 12px;
+            color: var(--text-dark);
+            line-height: 1.5;
+            margin-bottom: 15px;
+            max-height: 100px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .promo-description.expanded {
+            max-height: none;
+            overflow: visible;
+        }
+        
+        .promo-description::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: linear-gradient(to bottom, transparent, white);
+            opacity: 1;
+            transition: opacity 0.3s;
+        }
+        
+        .promo-description.expanded::after {
+            opacity: 0;
+        }
+        
+        .read-more-btn {
+            background: none;
+            border: none;
+            color: var(--primary-orange);
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 5px 0;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .read-more-btn:hover {
+            text-decoration: underline;
+        }
+        
+        .promo-specs {
+            background: var(--accent-gray);
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 15px;
+        }
+        
+        .specs-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .specs-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+        }
+        
+        .specs-list li {
+            font-size: 11px;
+            color: var(--text-medium);
+            padding: 4px 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .specs-list li i {
+            color: var(--primary-orange);
+            font-size: 10px;
+            width: 16px;
+            text-align: center;
+        }
+        
+        /* Cadeaux inclus */
+        .promo-gifts {
+            background: linear-gradient(90deg, #E8F5E9, #F1F8E9);
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--success-green);
+        }
+        
+        .gifts-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--success-green);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .gifts-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .gift-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: white;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            color: var(--text-dark);
+            border: 1px solid var(--border-color);
+        }
+        
+        .gift-item i {
+            color: var(--success-green);
+            font-size: 10px;
+        }
+        
+        .promo-availability {
+            font-size: 11px;
+            color: var(--text-medium);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: var(--accent-gray);
+            border-radius: 4px;
+        }
+        
+        .availability-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success-green);
+        }
+        
+        .promo-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-contact-promo {
+            flex: 1;
+            background: var(--white);
+            border: 1px solid var(--secondary-blue);
+            color: var(--secondary-blue);
+            border-radius: 4px;
+            padding: 10px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            text-align: center;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        
+        .btn-contact-promo:hover {
+            background: var(--secondary-blue);
+            color: white;
+            text-decoration: none;
+        }
+        
+        .btn-cart-promo {
+            flex: 1;
+            background: var(--secondary-blue);
+            border: 1px solid var(--secondary-blue);
+            color: white;
+            border-radius: 4px;
+            padding: 10px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-weight: 600;
+        }
+        
+        .btn-cart-promo:hover {
+            background: #0052A3;
+        }
+        
+        .btn-cart-promo.adding {
+            background: var(--primary-orange);
+            border-color: var(--primary-orange);
+        }
+        
+        /* Footer avec navigation fonctionnelle */
+        .footer-kdo {
+            background: var(--white);
+            border-top: 1px solid var(--border-color);
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            padding: 8px 0;
+            z-index: 1000;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .footer-nav {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        
+        .footer-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-medium);
+            transition: all 0.2s;
+            padding: 4px;
+            min-width: 60px;
+            position: relative;
+        }
+        
+        .footer-item:hover,
+        .footer-item.active {
+            color: var(--primary-orange);
+            text-decoration: none;
+        }
+        
+        .footer-icon {
+            font-size: 18px;
+            margin-bottom: 2px;
+        }
+        
+        .footer-label {
+            font-size: 10px;
+            font-weight: 500;
+        }
+        
+        .cart-count-badge {
+            position: absolute;
+            top: 0;
+            right: 5px;
+            background: var(--primary-orange);
+            color: white;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: bold;
+        }
+        
+        /* Notification */
+        #cartAlert {
+            position: fixed;
+            top: 70px;
+            right: 15px;
+            z-index: 9999;
+            min-width: 250px;
+            box-shadow: var(--shadow-hover);
+            border-left: 3px solid var(--primary-orange);
+            display: none;
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .promotions-container {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
+            
+            .promo-carousel {
+                animation: slidePromo 20s infinite linear;
+            }
+            
+            .specs-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .gifts-list {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .promotions-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .promo-title {
+                font-size: 20px;
+            }
+            
+            .promo-subtitle {
+                font-size: 12px;
+            }
+            
+            .promo-carousel {
+                animation: slidePromo 15s infinite linear;
+            }
+            
+            .promo-slide {
+                padding: 8px 15px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .promotions-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .logo-text {
+                display: none;
+            }
+            
+            .search-wrapper {
+                margin: 0 5px;
+                max-width: 100%;
+            }
+            
+            .promo-title {
+                font-size: 18px;
+            }
+            
+            .promo-subtitle {
+                display: none;
+            }
+            
+            .promo-carousel {
+                animation: slidePromo 12s infinite linear;
+            }
+            
+            .promo-slide {
+                padding: 8px 12px;
+            }
+            
+            .promo-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header simplifié -->
+    <header class="header-kdo">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <!-- Logo -->
+                <a href="dashboard.html" class="logo-container text-decoration-none">
+                    <img src="https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/logos.png" 
+                         alt="KDO CAMEROUN" 
+                         class="logo-img">
+                    <span class="logo-text">KDO CAMEROUN</span>
+                </a>
+                
+                <!-- Barre de recherche -->
+                <div class="search-wrapper">
+                    <input type="text" class="search-input" placeholder="Rechercher produits en promotion...">
+                    <button class="search-btn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Carrousel de promotions -->
+    <div class="promo-carousel-container">
+        <div class="promo-carousel">
+            <!-- Les promotions défilent automatiquement -->
+            <div class="promo-slide">
+                <span class="promo-badge">🔥 PROMO</span>
+                <span class="promo-text">ACER CHROMEBOOK à <span class="promo-price">39 900 FCFA</span></span>
+            </div>
+            <div class="promo-slide">
+                <span class="promo-badge">🔥 PROMO</span>
+                <span class="promo-text">DELL LATITUDE 3190 <span class="promo-price">59 900 FCFA</span></span>
+            </div>
+            <div class="promo-slide">
+                <span class="promo-badge">🔥 PROMO</span>
+                <span class="promo-text">HUAWEI NOVA PLUS <span class="promo-price">24 900 FCFA</span></span>
+            </div>
+            <div class="promo-slide">
+                <span class="promo-badge">🔥 PROMO</span>
+                <span class="promo-text">SAMSUNG <span class="promo-price">35 000 FCFA</span></span>
+            </div>
+            <!-- Doubler pour créer l'effet infini -->
+            <div class="promo-slide">
+                <span class="promo-badge">🔥 PROMO</span>
+                <span class="promo-text">ACER CHROMEBOOK à <span class="promo-price">39 900 FCFA</span></span>
+            </div>
+            <div class="promo-slide">
+                <span class="promo-badge">🔥 PROMO</span>
+                <span class="promo-text">DELL LATITUDE 3190 <span class="promo-price">59 900 FCFA</span></span>
+            </div>
+            <div class="promo-slide">
+                <span class="promo-badge">🔥 PROMO</span>
+                <span class="promo-text">HUAWEI NOVA PLUS <span class="promo-price">24 900 FCFA</span></span>
+            </div>
+            <div class="promo-slide">
+                <span class="promo-badge">🔥 PROMO</span>
+                <span class="promo-text">SAMSUNG <span class="promo-price">35 000 FCFA</span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barre de catégories horizontale défilante -->
+    <div class="categories-scroll">
+        <div class="categories-container">
+            <a href="#" class="category-item active">
+                <i class="fas fa-th-large"></i> Toutes les promos
+            </a>
+            <a href="#" class="category-item" data-category="ordinateur">
+                <i class="fas fa-laptop"></i> Ordinateurs
+            </a>
+            <a href="#" class="category-item" data-category="telephone">
+                <i class="fas fa-mobile-alt"></i> Téléphones
+            </a>
+            <a href="#" class="category-item" data-category="samsung">
+                <i class="fas fa-star"></i> Samsung
+            </a>
+        </div>
+    </div>
+
+    <!-- Titre des promotions -->
+    <div class="promo-title-section">
+        <div class="container">
+            <h1 class="promo-title">🔥 PROMOTIONS EXCEPTIONNELLES 🔥</h1>
+            <p class="promo-subtitle">Des offres limitées avec des réductions incroyables. Dépêchez-vous !</p>
+        </div>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="container">
+        <div class="main-container">
+            <!-- Grille de promotions -->
+            <main class="promotions-grid">
+                <div class="promotions-count mb-3">
+                    <div class="alert alert-warning" style="font-size: 11px; padding: 8px 12px;">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Attention :</strong> Ces promotions sont à durée limitée. Stocks très limités !
+                    </div>
+                </div>
+                
+                <div class="promotions-container" id="promotionsContainer">
+                    <!-- Promotions chargées dynamiquement -->
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Footer avec navigation fonctionnelle -->
+    <footer class="footer-kdo">
+        <div class="container">
+            <nav class="footer-nav">
+                <a href="dashboard.html" class="footer-item">
+                    <i class="fas fa-home footer-icon"></i>
+                    <span class="footer-label">Accueil</span>
+                </a>
+                <a href="promotion.html" class="footer-item active">
+                    <i class="fas fa-tags footer-icon"></i>
+                    <span class="footer-label">Promotions</span>
+                </a>
+                <a href="boutique.html" class="footer-item">
+                    <i class="fas fa-store footer-icon"></i>
+                    <span class="footer-label">Boutique</span>
+                </a>
+                <a href="panier.html" class="footer-item" id="footerCart">
+                    <i class="fas fa-shopping-cart footer-icon"></i>
+                    <span class="footer-label">Panier</span>
+                    <span id="footerCartCount" class="cart-count-badge">0</span>
+                </a>
+                <a href="profil.html" class="footer-item">
+                    <i class="far fa-user footer-icon"></i>
+                    <span class="footer-label">Mon KDO</span>
+                </a>
+            </nav>
+        </div>
+    </footer>
+
+    <!-- Notification -->
+    <div class="alert alert-success alert-dismissible fade" id="cartAlert" role="alert">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-check-circle me-3" style="color: var(--primary-orange);"></i>
+            <div>
+                <strong>Produit ajouté au panier !</strong>
+                <p class="mb-0 small" id="cartProductName"></p>
+            </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Bootstrap & jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Script principal -->
+    <script>
+        // Données des promotions
+        const promotions = [
+            {
+                id: 1,
+                name: "ACER CHROMEBOOK",
+                price: 39900,
+                oldPrice: 89900,
+                discount: 56,
+                category: "ordinateur",
+                image: "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/IMG-20260206-WA0063.jpg",
+                stockLimit: true,
+                stockCount: 4,
+                description: "💻 Ordinateur Portable Professionnel Slim – Marque ACER\n\n🔧 Spécifications techniques :\n- Processeur : Intel Celeron Quad-Core 1.4 GHz\n- Stockage : SSD 128 Go (rapide et fluide)\n- RAM : 2 Go ou 4 Go\n- Connectivité : Wi-Fi, Bluetooth, Port HDMI, Ports USB, Lecteur de carte TF (MicroSD)\n- Webcam intégrée\n- Écran : 12 pouces, slim et élégant\n- Autonomie : + de 7 heures\n- Chargeur d'origine inclus\n\n💼 Convient pour :\n- Étudiants, enseignants\n- Travailleurs, freelance\n- Entrepreneurs, commerçants\n- Tâches bureautiques, navigation, cours en ligne\n\n🇺🇸 Importé des États-Unis\n🎁 Une vraie opportunité à petit prix !",
+                specs: [
+                    "SSD 128 Go",
+                    "RAM 4 Go",
+                    "Processeur Intel Celeron",
+                    "Écran 12 pouces",
+                    "Autonomie 7h+",
+                    "Wi-Fi & Bluetooth",
+                    "Ports USB & HDMI",
+                    "Webcam intégrée"
+                ],
+                availability: "Disponible à Yaoundé, Douala, Bafoussam, Dschang, Bertoua, Maroua, Garoua, Ngaoundéré"
+            },
+            {
+                id: 2,
+                name: "DELL LATITUDE 3190",
+                price: 59900,
+                oldPrice: 99900,
+                discount: 40,
+                category: "ordinateur",
+                image: "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/IMG-20260206-WA0064.jpg",
+                stockLimit: true,
+                stockCount: 3,
+                description: "🔥 PROMO SPÉCIALE – DELL LATITUDE 3190 🔥\n💻 Laptop professionnel – Ultra slim & rapide\n\n✅ Idéal pour étudiants, informaticiens, infographes, bureautique, télétravail et navigation fluide.\n\n⚙️ Caractéristiques clés :\n- Intel Quad Core (Celeron N4120)\n- 4 Go RAM\n- 256 Go SSD ⚡ (démarrage ultra rapide)\n- Écran 12 pouces Ultra Slim\n- Webcam – HDMI – USB – Wi-Fi – Bluetooth\n- Windows 10 Pro\n- Pack Office + logiciels installés ✅\n\n📍 Disponible chez KDO INFORMATIC & TECHNOLOGY\n📌 Yaoundé | Douala | Bafoussam | Dschang | Bertoua | Maroua.",
+                specs: [
+                    "SSD 256 Go",
+                    "RAM 4 Go",
+                    "Intel Quad Core N4120",
+                    "Écran 12 pouces Ultra Slim",
+                    "Windows 10 Pro",
+                    "Wi-Fi & Bluetooth",
+                    "Ports HDMI & USB",
+                    "Webcam intégrée"
+                ],
+                availability: "Disponible à Yaoundé, Douala, Bafoussam, Dschang, Bertoua, Maroua",
+                gifts: ["Sac professionnel", "Clé USB 64 Go", "Souris sans fil"]
+            },
+            {
+                id: 3,
+                name: "HUAWEI NOVA PLUS",
+                price: 24900,
+                oldPrice: 49900,
+                discount: 50,
+                category: "telephone",
+                image: "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/IMG-20251021-WA0003(2).jpg",
+                stockLimit: true,
+                stockCount: 6,
+                description: "Offre exceptionnelle chez KDO !\n\nVous cherchez un smartphone puissant, élégant et pas cher ?\nCraquez pour le Huawei Nova Plus – 64 Go de mémoire interne, 4 Go de RAM, grand écran Full HD, appareil photo impeccable, batterie solide, et design premium !\n\nIdéal pour les appels, WhatsApp, YouTube, photos, et toutes vos applis préférées.\n\nDisponible maintenant à seulement 24 900 FCFA !\n\nQuantité très limitée – Premier arrivé, premier servi !\n\nCommandez dès maintenant chez KDO",
+                specs: [
+                    "64 Go mémoire interne",
+                    "4 Go RAM",
+                    "Caméra 16MP OIS",
+                    "Batterie 3340 mAh",
+                    "Écran Full HD",
+                    "Design premium",
+                    "Couleurs multiples"
+                ],
+                availability: "Disponible dans toutes les villes principales"
+            },
+            {
+                id: 4,
+                name: "SAMSUNG",
+                price: 35000,
+                oldPrice: 50000,
+                discount: 30,
+                category: "samsung",
+                image: "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/89_1.jpg",
+                stockLimit: true,
+                stockCount: 5,
+                description: "🔥 PROMOTION EXCLUSIVE - SMARTPHONE SAMSUNG 🔥\n\n📱 Smartphone Samsung performant à un prix incroyable !\n\n⚡ Caractéristiques principales :\n- Écran lumineux et net\n- Mémoire interne généreuse\n- RAM performante pour multitâche\n- Caméra de qualité pour vos photos\n- Batterie longue durée\n- Design moderne et élégant\n\n🎯 Parfait pour :\n- Communication quotidienne\n- Navigation internet\n- Photos et vidéos\n- Réseaux sociaux\n- Applications de productivité\n\n💎 Offre limitée - Ne manquez pas cette opportunité !",
+                specs: [
+                    "Écran haute qualité",
+                    "Mémoire interne ample",
+                    "RAM performante",
+                    "Caméra avancée",
+                    "Batterie longue durée",
+                    "Design moderne",
+                    "Connectivité complète"
+                ],
+                availability: "Disponible à Yaoundé, Douala, Bafoussam, Dschang"
+            }
+        ];
+
+        // Variables globales
+        let cart = [];
+        let filteredPromotions = [...promotions];
+        let currentCategory = "all";
+
+        // Formatage des prix
+        function formatPrice(price) {
+            return new Intl.NumberFormat('fr-FR').format(price) + " FCFA";
+        }
+
+        // Rendu des promotions
+        function renderPromotions() {
+            const container = $('#promotionsContainer');
+            container.empty();
+            
+            if (filteredPromotions.length === 0) {
+                container.html(`
+                    <div class="col-12 text-center py-5">
+                        <i class="fas fa-search fa-3x mb-3 text-muted"></i>
+                        <h5 class="text-muted">Aucune promotion trouvée</h5>
+                        <p class="text-muted">Essayez de modifier vos filtres de recherche</p>
+                    </div>
+                `);
+                return;
+            }
+            
+            filteredPromotions.forEach(p => {
+                const descriptionLines = p.description.split('\n');
+                const shortDescription = descriptionLines.slice(0, 3).join('\n');
+                const fullDescription = p.description;
+                
+                const promoCard = `
+                    <div class="promo-card" data-category="${p.category}">
+                        <div class="promo-header">
+                            <img src="${p.image}" alt="${p.name}" class="promo-image">
+                            <div class="promo-badges">
+                                <div class="badge-promo">
+                                    <i class="fas fa-bolt"></i> -${p.discount}%
+                                </div>
+                                ${p.stockLimit ? `
+                                    <div class="badge-stock">
+                                        <i class="fas fa-exclamation-circle"></i> Stock: ${p.stockCount}
+                                    </div>
+                                ` : ''}
+                            </div>
+                            <div class="badge-timer">
+                                <i class="fas fa-clock"></i> Offre limitée
+                            </div>
+                        </div>
+                        <div class="promo-content">
+                            <h3 class="promo-product-title">${p.name}</h3>
+                            <div class="promo-price-container">
+                                <div class="promo-current-price">${formatPrice(p.price)}</div>
+                                <div class="promo-old-price">${formatPrice(p.oldPrice)}</div>
+                                <div class="promo-discount">-${p.discount}%</div>
+                            </div>
+                            <div class="promo-description" id="description-${p.id}">
+                                ${shortDescription.replace(/\n/g, '<br>')}
+                            </div>
+                            <button class="read-more-btn" data-id="${p.id}">
+                                <i class="fas fa-chevron-down"></i> Voir plus de détails
+                            </button>
+                            <div class="promo-specs">
+                                <div class="specs-title">
+                                    <i class="fas fa-list"></i> Caractéristiques principales
+                                </div>
+                                <ul class="specs-list">
+                                    ${p.specs.map(spec => `<li><i class="fas fa-check"></i> ${spec}</li>`).join('')}
+                                </ul>
+                            </div>
+                            ${p.gifts ? `
+                                <div class="promo-gifts">
+                                    <div class="gifts-title">
+                                        <i class="fas fa-gift"></i> Cadeaux inclus gratuitement
+                                    </div>
+                                    <div class="gifts-list">
+                                        ${p.gifts.map(gift => `
+                                            <div class="gift-item">
+                                                <i class="fas fa-check-circle"></i> ${gift}
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            ` : ''}
+                            <div class="promo-availability">
+                                <div class="availability-dot"></div>
+                                ${p.availability}
+                            </div>
+                            <div class="promo-actions">
+                                <a href="contact.html?product=${p.id}&productName=${encodeURIComponent(p.name)}&productPrice=${formatPrice(p.price)}" 
+                                   class="btn-contact-promo">
+                                    <i class="fas fa-comment-dots"></i> Contacter pour cette promo
+                                </a>
+                                <button class="btn-cart-promo" data-id="${p.id}">
+                                    <i class="fas fa-cart-plus"></i> Ajouter au panier
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.append(promoCard);
+            });
+            
+            // Initialiser les boutons "Voir plus"
+            initializeReadMoreButtons();
+        }
+
+        // Initialiser les boutons "Voir plus"
+        function initializeReadMoreButtons() {
+            $('.read-more-btn').off('click').on('click', function() {
+                const promoId = $(this).data('id');
+                const descriptionSection = $(`#description-${promoId}`);
+                const button = $(this);
+                
+                if (descriptionSection.hasClass('expanded')) {
+                    // Réduire la description
+                    const promo = promotions.find(p => p.id === promoId);
+                    const shortDescription = promo.description.split('\n').slice(0, 3).join('\n');
+                    descriptionSection.removeClass('expanded');
+                    descriptionSection.html(shortDescription.replace(/\n/g, '<br>'));
+                    button.html('<i class="fas fa-chevron-down"></i> Voir plus de détails');
+                } else {
+                    // Développer la description
+                    const promo = promotions.find(p => p.id === promoId);
+                    descriptionSection.addClass('expanded');
+                    descriptionSection.html(promo.description.replace(/\n/g, '<br>'));
+                    button.html('<i class="fas fa-chevron-up"></i> Voir moins');
+                }
+            });
+        }
+
+        // Filtrer les promotions
+        function filterPromotions() {
+            const searchTerm = $('.search-input').val().toLowerCase().trim();
+            
+            filteredPromotions = promotions.filter(p => {
+                // Filtre par catégorie
+                if (currentCategory !== "all" && p.category !== currentCategory) return false;
+                
+                // Filtre par recherche
+                if (searchTerm) {
+                    return p.name.toLowerCase().includes(searchTerm) ||
+                           p.description.toLowerCase().includes(searchTerm) ||
+                           p.specs.some(spec => spec.toLowerCase().includes(searchTerm));
+                }
+                
+                return true;
+            });
+            
+            renderPromotions();
+        }
+
+        // Animation d'ajout au panier
+        function animateAddToCart(productName) {
+            // Notification
+            $('#cartProductName').text(productName);
+            const alert = $('#cartAlert');
+            alert.removeClass('fade').addClass('show');
+            
+            setTimeout(() => {
+                alert.removeClass('show').addClass('fade');
+            }, 3000);
+            
+            // Mettre à jour le compteur panier
+            updateCartCount();
+        }
+
+        // Mettre à jour le compteur panier
+        function updateCartCount() {
+            const cartCount = cart.length;
+            $('#footerCartCount').text(cartCount);
+        }
+
+        // Ajout au panier
+        function addToCart(productId) {
+            const product = promotions.find(p => p.id === productId);
+            
+            if (!product) return;
+            
+            // Vérifier si le produit est déjà dans le panier
+            const existingItem = cart.find(item => item.id === productId);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                const productCopy = {...product};
+                productCopy.quantity = 1;
+                cart.push(productCopy);
+            }
+            
+            // Animation du bouton
+            const $button = $(`.btn-cart-promo[data-id="${productId}"]`);
+            $button.addClass('adding');
+            setTimeout(() => {
+                $button.removeClass('adding');
+            }, 500);
+            
+            // Animation et notification
+            animateAddToCart(product.name);
+            
+            // Sauvegarder dans localStorage
+            saveCartToLocalStorage();
+        }
+
+        // Sauvegarder le panier dans localStorage
+        function saveCartToLocalStorage() {
+            localStorage.setItem('promoCart', JSON.stringify(cart));
+        }
+
+        // Charger le panier depuis localStorage
+        function loadCartFromLocalStorage() {
+            const savedCart = localStorage.getItem('promoCart');
+            if (savedCart) {
+                cart = JSON.parse(savedCart);
+                updateCartCount();
+            }
+        }
+
+        // Initialisation
+        $(document).ready(function() {
+            // Charger le panier
+            loadCartFromLocalStorage();
+            
+            // Initialiser les promotions
+            renderPromotions();
+            
+            // Recherche
+            $('.search-btn').on('click', filterPromotions);
+            
+            $('.search-input').on('keyup', function(e) {
+                if (e.key === 'Enter') {
+                    filterPromotions();
+                }
+            });
+            
+            // Filtrage par catégorie
+            $('.category-item').on('click', function(e) {
+                e.preventDefault();
+                
+                // Mettre à jour l'état actif
+                $('.category-item').removeClass('active');
+                $(this).addClass('active');
+                
+                // Mettre à jour la catégorie courante
+                currentCategory = $(this).data('category') || "all";
+                
+                // Appliquer les filtres
+                filterPromotions();
+            });
+            
+            // Ajout au panier
+            $(document).on('click', '.btn-cart-promo', function(e) {
+                e.preventDefault();
+                const productId = parseInt($(this).data('id'));
+                addToCart(productId);
+            });
+            
+            // Navigation footer
+            $('.footer-item').on('click', function(e) {
+                // La navigation se fait via les liens href
+                // On met à jour l'état actif
+                $('.footer-item').removeClass('active');
+                $(this).addClass('active');
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,2432 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KDO CAMEROUN - Marketplace professionnelle</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS personnalisé -->
+    <style>
+        :root {
+            --primary-orange: #FF6B00;
+            --secondary-blue: #0066CC;
+            --accent-gray: #F5F5F5;
+            --text-dark: #333333;
+            --text-medium: #666666;
+            --text-light: #999999;
+            --border-color: #E0E0E0;
+            --white: #FFFFFF;
+            --shadow: 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-hover: 0 3px 10px rgba(0,0,0,0.1);
+            --success-green: #52C41A;
+            --danger-red: #FF4D4F;
+        }
+        
+        * {
+            font-size: 12px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            background-color: var(--white);
+            color: var(--text-dark);
+            padding-bottom: 60px; /* légèrement augmenté pour le footer plus grand */
+            -webkit-text-size-adjust: 100%;
+            -moz-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+        
+        /* Header agrandi */
+        .header-kdo {
+            border-bottom: 1px solid var(--border-color);
+            background: var(--white);
+            padding: 12px 0; /* augmenté de 8px à 12px */
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 10px; /* légèrement augmenté */
+        }
+        
+        .logo-img {
+            height: 40px; /* augmenté de 32px à 40px */
+            width: auto;
+            object-fit: contain;
+        }
+        
+        .logo-text {
+            color: var(--primary-orange);
+            font-weight: 700;
+            font-size: 18px; /* augmenté de 16px à 18px */
+            letter-spacing: -0.5px;
+        }
+        
+        /* Carrousel de promotions */
+        .promo-carousel-container {
+            background: linear-gradient(90deg, #FFF8F3 0%, #FFF 100%);
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 0;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 12px;
+        }
+        
+        .promo-carousel {
+            display: flex;
+            animation: slidePromo 25s infinite linear;
+            width: max-content;
+        }
+        
+        .promo-slide {
+            display: flex;
+            align-items: center;
+            padding: 8px 20px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        
+        .promo-badge {
+            background: var(--primary-orange);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 10px;
+            margin-right: 10px;
+        }
+        
+        .promo-text {
+            color: var(--text-dark);
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .promo-price {
+            color: var(--primary-orange);
+            font-weight: 700;
+            margin-left: 5px;
+        }
+        
+        @keyframes slidePromo {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+        
+        /* Barre de recherche */
+        .search-wrapper {
+            position: relative;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .search-input {
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 8px 40px 8px 12px;
+            font-size: 12px;
+            width: 100%;
+            height: 36px;
+        }
+        
+        .search-input:focus {
+            border-color: var(--primary-orange);
+            box-shadow: 0 0 0 2px rgba(255, 107, 0, 0.1);
+        }
+        
+        .search-btn {
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 100%;
+            background: var(--accent-gray);
+            color: var(--text-medium);
+            border: none;
+            border-radius: 0 4px 4px 0;
+            padding: 0 15px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        
+        .search-btn:hover {
+            background: var(--primary-orange);
+            color: white;
+        }
+        
+        /* Barre de catégories horizontale défilante */
+        .categories-scroll {
+            background: var(--accent-gray);
+            border-bottom: 1px solid var(--border-color);
+            padding: 8px 0;
+            margin-bottom: 12px;
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .categories-container {
+            display: inline-flex;
+            gap: 8px;
+            padding: 0 12px;
+        }
+        
+        .category-item {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 6px 12px;
+            color: var(--text-dark);
+            text-decoration: none;
+            font-size: 11px;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        
+        .category-item:hover,
+        .category-item.active {
+            background: var(--primary-orange);
+            color: white;
+            border-color: var(--primary-orange);
+        }
+        
+        .category-item i {
+            margin-right: 4px;
+            font-size: 11px;
+        }
+        
+        /* Filtres horizontaux simplifiés */
+        .filters-horizontal {
+            background: var(--white);
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 0;
+            margin-bottom: 12px;
+        }
+        
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .filter-label {
+            color: var(--text-medium);
+            font-size: 11px;
+            white-space: nowrap;
+        }
+        
+        /* Option pour activer/désactiver le filtre de prix */
+        .price-filter-toggle {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 36px;
+            height: 18px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .3s;
+            border-radius: 18px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: var(--primary-orange);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(18px);
+        }
+        
+        /* Slider de prix amélioré */
+        .price-slider-container {
+            min-width: 200px;
+            display: none;
+        }
+        
+        .price-slider-container.active {
+            display: block;
+        }
+        
+        .price-slider {
+            width: 100%;
+            height: 4px;
+            -webkit-appearance: none;
+            background: #ddd;
+            border-radius: 2px;
+            outline: none;
+        }
+        
+        .price-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--primary-orange);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .price-values {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 4px;
+        }
+        
+        .price-value {
+            font-size: 10px;
+            color: var(--text-medium);
+        }
+        
+        /* Conteneur principal */
+        .main-container {
+            display: flex;
+            gap: 15px;
+        }
+        
+        /* Sidebar des catégories */
+        .sidebar-categories {
+            width: 180px;
+            flex-shrink: 0;
+        }
+        
+        .category-box {
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: var(--white);
+            margin-bottom: 12px;
+        }
+        
+        .category-header {
+            background: var(--accent-gray);
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 600;
+            font-size: 12px;
+            color: var(--text-dark);
+        }
+        
+        .category-list {
+            list-style: none;
+            padding: 8px 0;
+            margin: 0;
+        }
+        
+        .category-item-sidebar {
+            padding: 6px 12px;
+            border-bottom: 1px solid var(--accent-gray);
+        }
+        
+        .category-item-sidebar:last-child {
+            border-bottom: none;
+        }
+        
+        .category-link {
+            color: var(--text-dark);
+            text-decoration: none;
+            font-size: 11px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .category-link:hover {
+            color: var(--primary-orange);
+        }
+        
+        .category-count {
+            background: var(--accent-gray);
+            color: var(--text-medium);
+            padding: 1px 6px;
+            border-radius: 10px;
+            font-size: 9px;
+        }
+        
+        /* Grille de produits */
+        .products-grid {
+            flex: 1;
+        }
+        
+        .products-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .products-count {
+            color: var(--text-medium);
+            font-size: 11px;
+        }
+        
+        .sort-select {
+            border: 1px solid var(--border-color);
+            border-radius: 3px;
+            padding: 5px 8px;
+            font-size: 11px;
+            background: var(--white);
+            min-width: 140px;
+        }
+        
+        /* Carte produit - NOUVEAU STYLE POUR LES IMAGES */
+        .products-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+        
+        .product-card {
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: var(--white);
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .product-card:hover {
+            border-color: var(--primary-orange);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .product-image {
+            height: 200px;
+            background: var(--accent-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .product-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+        
+        .product-card:hover .product-img {
+            transform: scale(1.05);
+        }
+        
+        .product-badge {
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            background: var(--success-green);
+            color: white;
+            font-size: 9px;
+            padding: 1px 6px;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            z-index: 2;
+        }
+        
+        .product-badge i {
+            font-size: 8px;
+        }
+        
+        .discount-badge {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            background: var(--danger-red);
+            color: white;
+            font-size: 9px;
+            padding: 1px 6px;
+            border-radius: 2px;
+            font-weight: bold;
+        }
+        
+        .cart-quantity-badge {
+            position: absolute;
+            top: 30px;
+            right: 6px;
+            background: var(--primary-orange);
+            color: white;
+            font-size: 9px;
+            padding: 1px 6px;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            z-index: 2;
+        }
+        
+        .product-info {
+            padding: 10px;
+            border-top: 1px solid var(--accent-gray);
+        }
+        
+        .product-title {
+            font-size: 12px;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+            line-height: 1.3;
+            height: 32px;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+        
+        .product-price-container {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 4px;
+        }
+        
+        .product-price {
+            color: var(--primary-orange);
+            font-weight: 700;
+            font-size: 14px;
+        }
+        
+        .product-old-price {
+            color: var(--text-light);
+            font-size: 11px;
+            text-decoration: line-through;
+        }
+        
+        .product-specs {
+            font-size: 10px;
+            color: var(--text-medium);
+            margin-bottom: 6px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .product-orders {
+            font-size: 10px;
+            color: var(--text-medium);
+            margin-bottom: 8px;
+        }
+        
+        /* Bouton Voir plus pour les détails */
+        .details-toggle {
+            width: 100%;
+            background: none;
+            border: 1px solid var(--border-color);
+            border-radius: 3px;
+            padding: 6px;
+            font-size: 10px;
+            color: var(--primary-orange);
+            cursor: pointer;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            transition: all 0.2s;
+        }
+        
+        .details-toggle:hover {
+            background: var(--accent-gray);
+            border-color: var(--primary-orange);
+        }
+        
+        .details-toggle i {
+            transition: transform 0.3s ease;
+        }
+        
+        .details-toggle.expanded i {
+            transform: rotate(180deg);
+        }
+        
+        /* Section des détails dépliables */
+        .product-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: var(--accent-gray);
+            border-radius: 4px;
+            margin-top: 8px;
+        }
+        
+        .product-details.expanded {
+            max-height: 500px;
+            padding: 10px;
+            overflow-y: auto;
+        }
+        
+        .details-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .details-list li {
+            font-size: 10px;
+            color: var(--text-medium);
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .details-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .details-list li span:first-child {
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+        
+        .details-list li span:last-child {
+            text-align: right;
+        }
+        
+        .product-actions {
+            display: flex;
+            gap: 6px;
+        }
+        
+        .btn-contact {
+            flex: 1;
+            background: var(--white);
+            border: 1px solid var(--secondary-blue);
+            color: var(--secondary-blue);
+            border-radius: 3px;
+            padding: 6px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            text-align: center;
+        }
+        
+        .btn-contact:hover {
+            background: var(--secondary-blue);
+            color: white;
+            text-decoration: none;
+        }
+        
+        .btn-cart {
+            flex: 1;
+            background: var(--secondary-blue);
+            border: 1px solid var(--secondary-blue);
+            color: white;
+            border-radius: 3px;
+            padding: 6px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            position: relative;
+        }
+        
+        .btn-cart:hover {
+            background: #0052A3;
+        }
+        
+        .btn-cart.adding {
+            background: var(--primary-orange);
+            border-color: var(--primary-orange);
+        }
+        
+        /* Animation pour le bouton panier */
+        @keyframes bounce {
+            0%, 20%, 60%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-5px);
+            }
+            80% {
+                transform: translateY(-2px);
+            }
+        }
+        
+        .btn-cart.adding i {
+            animation: bounce 0.5s;
+        }
+        
+        /* Pagination */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin: 25px 0;
+        }
+        
+        .pagination {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .page-item {
+            border: 1px solid var(--border-color);
+            border-radius: 3px;
+            transition: all 0.2s;
+        }
+        
+        .page-item:hover:not(.disabled):not(.active) {
+            border-color: var(--primary-orange);
+        }
+        
+        .page-link {
+            padding: 4px 8px;
+            font-size: 11px;
+            color: var(--text-dark);
+            text-decoration: none;
+            display: block;
+            min-width: 30px;
+            text-align: center;
+        }
+        
+        .page-item.active {
+            background: var(--primary-orange);
+            border-color: var(--primary-orange);
+        }
+        
+        .page-item.active .page-link {
+            color: white;
+        }
+        
+        .page-item.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .page-item.disabled .page-link {
+            color: var(--text-light);
+        }
+        
+        /* Footer avec navigation fonctionnelle - agrandi */
+        .footer-kdo {
+            background: var(--white);
+            border-top: 1px solid var(--border-color);
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            padding: 12px 0; /* augmenté de 8px à 12px */
+            z-index: 1000;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .footer-nav {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        
+        .footer-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-medium);
+            transition: all 0.2s;
+            padding: 4px;
+            min-width: 70px; /* augmenté de 60px à 70px */
+            position: relative;
+        }
+        
+        .footer-item:hover,
+        .footer-item.active {
+            color: var(--primary-orange);
+            text-decoration: none;
+        }
+        
+        .footer-icon {
+            font-size: 20px; /* augmenté de 18px à 20px */
+            margin-bottom: 2px;
+        }
+        
+        .footer-label {
+            font-size: 11px; /* augmenté de 10px à 11px */
+            font-weight: 500;
+        }
+        
+        /* Notification */
+        #cartAlert {
+            position: fixed;
+            top: 70px;
+            right: 15px;
+            z-index: 9999;
+            min-width: 250px;
+            box-shadow: var(--shadow-hover);
+            border-left: 3px solid var(--primary-orange);
+            display: none;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        /* Animation de l'article vers le panier */
+        .cart-animation-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9998;
+        }
+        
+        .cart-animation-item {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: var(--primary-orange);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            z-index: 9999;
+            animation: flyToCart 1s cubic-bezier(0.5, 0, 0.5, 1) forwards;
+        }
+        
+        @keyframes flyToCart {
+            0% {
+                transform: scale(1) translate(0, 0);
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(0.2) translate(var(--endX), var(--endY));
+                opacity: 0;
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar-categories {
+                display: none;
+            }
+            
+            .products-container {
+                grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            }
+            
+            .product-image {
+                height: 180px;
+            }
+            
+            .promo-carousel {
+                animation: slidePromo 20s infinite linear;
+            }
+            
+            /* Ajustements footer sur tablette */
+            .footer-item {
+                min-width: 60px;
+            }
+            .footer-icon {
+                font-size: 18px;
+            }
+            .footer-label {
+                font-size: 10px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .products-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .product-image {
+                height: 200px;
+            }
+            
+            .filter-row {
+                gap: 8px;
+            }
+            
+            .price-slider-container {
+                min-width: 180px;
+            }
+            
+            .logo-text {
+                font-size: 16px; /* légère réduction sur mobile */
+            }
+            
+            .promo-carousel {
+                animation: slidePromo 15s infinite linear;
+            }
+            
+            .promo-slide {
+                padding: 8px 15px;
+            }
+            
+            #cartAlert {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                min-width: auto;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .products-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .product-image {
+                height: 180px;
+            }
+            
+            .logo-text {
+                display: block;
+                font-size: 14px; /* encore réduit mais reste lisible */
+            }
+            
+            .logo-img {
+                height: 36px; /* légèrement réduit mais plus grand qu'avant */
+            }
+            
+            .search-wrapper {
+                margin: 0 5px;
+                max-width: 100%;
+            }
+            
+            .price-slider-container {
+                min-width: 150px;
+            }
+            
+            .filter-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .promo-carousel {
+                animation: slidePromo 12s infinite linear;
+            }
+            
+            .promo-slide {
+                padding: 8px 12px;
+            }
+            
+            .header-kdo .container {
+                padding: 0 10px;
+            }
+            
+            .footer-kdo .container {
+                padding: 0 5px;
+            }
+            
+            /* Ajustements footer sur mobile */
+            .footer-item {
+                min-width: 50px;
+            }
+            .footer-icon {
+                font-size: 18px;
+            }
+            .footer-label {
+                font-size: 9px;
+            }
+        }
+        
+        /* Style pour le panier dans le footer */
+        .cart-count-badge {
+            position: absolute;
+            top: 0;
+            right: 5px;
+            background: var(--primary-orange);
+            color: white;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: bold;
+        }
+        
+        /* Pour les très petits écrans */
+        @media (max-width: 360px) {
+            .logo-text {
+                display: none;
+            }
+            
+            .footer-label {
+                font-size: 8px;
+            }
+            
+            .products-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .product-image {
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header simplifié (agrandi) -->
+    <header class="header-kdo">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <!-- Logo -->
+                <a href="dashboard.html" class="logo-container text-decoration-none">
+                    <img src="https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/logos.png" 
+                         alt="KDO CAMEROUN" 
+                         class="logo-img">
+                    <span class="logo-text">KDO CAMEROUN</span>
+                </a>
+                
+                <!-- Barre de recherche -->
+                <div class="search-wrapper">
+                    <input type="text" class="search-input" placeholder="Rechercher produits, fournisseurs...">
+                    <button class="search-btn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Carrousel de promotions -->
+    <div class="promo-carousel-container">
+        <div class="promo-carousel">
+            <!-- Les promotions défilent automatiquement -->
+            <div class="promo-slide">
+                <span class="promo-badge">PROMO</span>
+                <span class="promo-text">DELL Latitude 3190 à partir de <span class="promo-price">65 000 FCFA</span></span>
+            </div>
+            <div class="promo-slide">
+                <span class="promo-badge">PROMO</span>
+                <span class="promo-text">HP Elitebook 840 G3 <span class="promo-price">160 000 FCFA</span></span>
+            </div>
+            <div class="promo-slide">
+                <span class="promo-badge">PROMO</span>
+                <span class="promo-text">TOSHIBA Disque Dur 500Go <span class="promo-price">15 000 FCFA</span></span>
+            </div>
+            <div class="promo-slide">
+                <span class="promo-badge">PROMO</span>
+                <span class="promo-text">FASTER Clé USB 64Go <span class="promo-price">-25%</span></span>
+            </div>
+            <div class="promo-slide">
+                <span class="promo-badge">PROMO</span>
+                <span class="promo-text">HP Souris Sans Fil <span class="promo-price">5 000 FCFA</span></span>
+            </div>
+            <!-- Doubler pour créer l'effet infini -->
+            <div class="promo-slide">
+                <span class="promo-badge">PROMO</span>
+                <span class="promo-text">DELL Latitude 3190 à partir de <span class="promo-price">65 000 FCFA</span></span>
+            </div>
+            <div class="promo-slide">
+                <span class="promo-badge">PROMO</span>
+                <span class="promo-text">HP Elitebook 840 G3 <span class="promo-price">160 000 FCFA</span></span>
+            </div>
+            <div class="promo-slide">
+                <span class="promo-badge">PROMO</span>
+                <span class="promo-text">TOSHIBA Disque Dur 500Go <span class="promo-price">15 000 FCFA</span></span>
+            </div>
+            <div class="promo-slide">
+                <span class="promo-badge">PROMO</span>
+                <span class="promo-text">FASTER Clé USB 64Go <span class="promo-price">-25%</span></span>
+            </div>
+            <div class="promo-slide">
+                <span class="promo-badge">PROMO</span>
+                <span class="promo-text">HP Souris Sans Fil <span class="promo-price">5 000 FCFA</span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barre de catégories horizontale défilante -->
+    <div class="categories-scroll">
+        <div class="categories-container">
+            <a href="#" class="category-item active">
+                <i class="fas fa-th-large"></i> Tous
+            </a>
+            <a href="#" class="category-item" data-category="ordinateur">
+                <i class="fas fa-laptop"></i> Ordinateurs
+            </a>
+            <a href="#" class="category-item" data-category="disquedur">
+                <i class="fas fa-hdd"></i> Disques Durs
+            </a>
+            <a href="#" class="category-item" data-category="usb">
+                <i class="fas fa-usb"></i> Clés USB
+            </a>
+            <a href="#" class="category-item" data-category="souris">
+                <i class="fas fa-mouse"></i> Souris
+            </a>
+            <a href="#" class="category-item" data-category="clavier">
+                <i class="fas fa-keyboard"></i> Claviers
+            </a>
+            <a href="#" class="category-item" data-category="modem">
+                <i class="fas fa-wifi"></i> Modems
+            </a>
+            <a href="#" class="category-item" data-category="desktop">
+                <i class="fas fa-desktop"></i> Desktop
+            </a>
+            <a href="#" class="category-item" data-category="ram">
+                <i class="fas fa-memory"></i> RAM
+            </a>
+            <a href="#" class="category-item" data-category="antivirus">
+                <i class="fas fa-shield-alt"></i> Antivirus
+            </a>
+            <a href="#" class="category-item" data-category="videoprojecteur">
+                <i class="fas fa-video"></i> Projecteurs
+            </a>
+            <a href="#" class="category-item" data-category="telephone">
+                <i class="fas fa-mobile-alt"></i> Téléphones
+            </a>
+            <a href="#" class="category-item" data-category="tablette">
+                <i class="fas fa-tablet-alt"></i> Tablettes
+            </a>
+            <a href="#" class="category-item" data-category="adaptateur">
+                <i class="fas fa-plug"></i> Adaptateurs
+            </a>
+            <a href="#" class="category-item" data-category="television">
+                <i class="fas fa-tv"></i> Télévisions
+            </a>
+            <a href="#" class="category-item" data-category="chargeur">
+                <i class="fas fa-bolt"></i> Chargeurs
+            </a>
+            <a href="#" class="category-item" data-category="sac">
+                <i class="fas fa-briefcase"></i> Sacs
+            </a>
+        </div>
+    </div>
+
+    <!-- Filtres horizontaux simplifiés -->
+    <div class="filters-horizontal">
+        <div class="container">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <span class="filter-label">Filtrer par prix :</span>
+                    <div class="price-filter-toggle">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="priceToggle">
+                            <span class="slider"></span>
+                        </label>
+                        <span class="filter-label" id="toggleLabel">Désactivé</span>
+                    </div>
+                </div>
+                
+                <div class="price-slider-container" id="priceSliderContainer">
+                    <input type="range" class="price-slider" id="priceSlider" min="1000" max="1000000" step="1000" value="1000000">
+                    <div class="price-values">
+                        <span class="price-value">1 000 FCFA</span>
+                        <span class="price-value" id="currentPrice">1 000 000 FCFA</span>
+                    </div>
+                </div>
+                
+                <div class="filter-group">
+                    <span class="filter-label">Trier par :</span>
+                    <select class="sort-select" id="sortProducts">
+                        <option value="relevance">Pertinence</option>
+                        <option value="price_asc">Prix croissant</option>
+                        <option value="price_desc">Prix décroissant</option>
+                        <option value="newest">Plus récents</option>
+                        <option value="popular">Plus populaires</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="container">
+        <div class="main-container">
+            <!-- Sidebar des catégories -->
+            <aside class="sidebar-categories">
+                <div class="category-box">
+                    <div class="category-header">
+                        <i class="fas fa-list me-2"></i> Catégories
+                    </div>
+                    <ul class="category-list">
+                        <li class="category-item-sidebar">
+                            <a href="#" class="category-link" data-category="ordinateur">
+                                <span>Ordinateurs</span>
+                                <span class="category-count">39</span>
+                            </a>
+                        </li>
+                        <li class="category-item-sidebar">
+                            <a href="#" class="category-link" data-category="disquedur">
+                                <span>Disques Durs</span>
+                                <span class="category-count">20</span>
+                            </a>
+                        </li>
+                        <li class="category-item-sidebar">
+                            <a href="#" class="category-link" data-category="usb">
+                                <span>Clés USB</span>
+                                <span class="category-count">7</span>
+                            </a>
+                        </li>
+                        <li class="category-item-sidebar">
+                            <a href="#" class="category-link" data-category="souris">
+                                <span>Souris</span>
+                                <span class="category-count">12</span>
+                            </a>
+                        </li>
+                        <li class="category-item-sidebar">
+                            <a href="#" class="category-link" data-category="clavier">
+                                <span>Claviers</span>
+                                <span class="category-count">7</span>
+                            </a>
+                        </li>
+                        <li class="category-item-sidebar">
+                            <a href="#" class="category-link" data-category="modem">
+                                <span>Modems</span>
+                                <span class="category-count">5</span>
+                            </a>
+                        </li>
+                        <li class="category-item-sidebar">
+                            <a href="#" class="category-link" data-category="desktop">
+                                <span>Desktop</span>
+                                <span class="category-count">6</span>
+                            </a>
+                        </li>
+                        <li class="category-item-sidebar">
+                            <a href="#" class="category-link" data-category="ram">
+                                <span>RAM</span>
+                                <span class="category-count">12</span>
+                            </a>
+                        </li>
+                        <li class="category-item-sidebar">
+                            <a href="#" class="category-link" data-category="antivirus">
+                                <span>Antivirus</span>
+                                <span class="category-count">10</span>
+                            </a>
+                        </li>
+                        <li class="category-item-sidebar">
+                            <a href="#" class="category-link" data-category="videoprojecteur">
+                                <span>Projecteurs</span>
+                                <span class="category-count">8</span>
+                            </a>
+                        </li>
+                        <li class="category-item-sidebar">
+                            <a href="#" class="category-link" data-category="telephone">
+                                <span>Téléphones</span>
+                                <span class="category-count">9</span>
+                            </a>
+                        </li>
+                        <li class="category-item-sidebar">
+                            <a href="#" class="category-link" data-category="tablette">
+                                <span>Tablettes</span>
+                                <span class="category-count">0</span>
+                            </a>
+                        </li>
+                        <li class="category-item-sidebar">
+                            <a href="#" class="category-link" data-category="adaptateur">
+                                <span>Adaptateurs</span>
+                                <span class="category-count">14</span>
+                            </a>
+                        </li>
+                        <li class="category-item-sidebar">
+                            <a href="#" class="category-link" data-category="television">
+                                <span>Télévisions</span>
+                                <span class="category-count">4</span>
+                            </a>
+                        </li>
+                        <li class="category-item-sidebar">
+                            <a href="#" class="category-link" data-category="chargeur">
+                                <span>Chargeurs</span>
+                                <span class="category-count">6</span>
+                            </a>
+                        </li>
+                        <li class="category-item-sidebar">
+                            <a href="#" class="category-link" data-category="sac">
+                                <span>Sacs</span>
+                                <span class="category-count">9</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </aside>
+            
+            <!-- Grille de produits -->
+            <main class="products-grid">
+                <div class="products-header">
+                    <div class="products-count" id="productsCount">Chargement des produits...</div>
+                    <div>
+                        <span class="filter-label me-2">Produits par page:</span>
+                        <select class="sort-select" id="itemsPerPage" style="width: auto;">
+                            <option value="10">10</option>
+                            <option value="20" selected>20</option>
+                            <option value="30">30</option>
+                            <option value="50">50</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="products-container" id="productsContainer">
+                    <!-- Produits chargés dynamiquement -->
+                </div>
+                
+                <!-- Pagination -->
+                <div class="pagination-container">
+                    <ul class="pagination" id="pagination">
+                        <!-- Pagination générée dynamiquement -->
+                    </ul>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Footer avec navigation fonctionnelle (agrandi) -->
+    <footer class="footer-kdo">
+        <div class="container">
+            <nav class="footer-nav">
+                <a href="dashboard.html" class="footer-item active">
+                    <i class="fas fa-home footer-icon"></i>
+                    <span class="footer-label">Accueil</span>
+                </a>
+                <a href="promotion.html" class="footer-item">
+                    <i class="fas fa-tag footer-icon"></i>
+                    <span class="footer-label">Promotion</span>
+                </a>
+                <a href="boutique.html" class="footer-item">
+                    <i class="fas fa-store footer-icon"></i>
+                    <span class="footer-label">Boutique</span>
+                </a>
+                <a href="panier.html" class="footer-item" id="footerCart">
+                    <i class="fas fa-shopping-cart footer-icon"></i>
+                    <span class="footer-label">Panier</span>
+                    <span id="footerCartCount" class="cart-count-badge">0</span>
+                </a>
+                <a href="profil.html" class="footer-item">
+                    <i class="far fa-user footer-icon"></i>
+                    <span class="footer-label">Mon KDO</span>
+                </a>
+            </nav>
+        </div>
+    </footer>
+
+    <!-- Conteneur pour animation du panier -->
+    <div class="cart-animation-container" id="cartAnimationContainer"></div>
+
+    <!-- Notification -->
+    <div class="alert alert-success alert-dismissible fade" id="cartAlert" role="alert">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-check-circle me-3" style="color: var(--primary-orange);"></i>
+            <div>
+                <strong>Produit ajouté au panier !</strong>
+                <p class="mb-0 small" id="cartProductName"></p>
+            </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Firebase SDK - MÊME VERSION QUE L'INSCRIPTION (10.8.0 compat) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+    <!-- Bootstrap & jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Script principal (inchangé) -->
+    <script>
+        // CONFIGURATION FIREBASE (IDENTIQUE À L'INSCRIPTION)
+        const firebaseConfig = {
+            apiKey: "AIzaSyAYcjkrXKcjqFnf8E91JZWU1lMGS-yxSOU",
+            authDomain: "kdo-cameroun.firebaseapp.com",
+            projectId: "kdo-cameroun",
+            storageBucket: "kdo-cameroun.firebasestorage.app",
+            messagingSenderId: "445876564547",
+            appId: "1:445876564547:web:26507d61bb091fa7bd1af6",
+            measurementId: "G-FX2DVSKLKZ"
+        };
+
+        // Initialiser Firebase (MÊME MÉTHODE QUE L'INSCRIPTION)
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Variables globales
+        let currentUser = null;
+        
+        // Images pour chaque catégorie
+        const categoryImages = {
+            // Images spécifiques pour les ordinateurs (38 images)
+            ordinateur: [
+                "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/Ordinateur/1.jpg",
+                "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/Ordinateur/2.jpg",
+                "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/Ordinateur/3.jpg",
+                "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/Ordinateur/4.jpg",
+                "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/Ordinateur/5.jpg",
+                "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/Ordinateur/6.jpg",
+                "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/Ordinateur/7.jpg",
+                "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/Ordinateur/8.jpeg",
+                "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/Ordinateur/9.jpeg",
+                "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/Ordinateur/10.jpeg",
+                "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/Ordinateur/11.jpeg",
+                "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/Ordinateur/12.jpeg",
+                "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/Ordinateur/13.jpeg",
+                "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/Ordinateur/14.jpeg",
+                "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/Ordinateur/15.jpeg",
+                "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/Ordinateur/16.jpeg",
+                "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/Ordinateur/17.jpeg",
+                "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/Ordinateur/18.jpeg",
+                "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/Ordinateur/19.jpeg",
+                "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/Ordinateur/20.jpg",
+                "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/Ordinateur/21.jpg",
+                "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/Ordinateur/22.jpeg",
+                "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/Ordinateur/23.jpg",
+                "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/Ordinateur/24.jpg",
+                "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/Ordinateur/25.jpg",
+                "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/Ordinateur/26.jpeg",
+                "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/Ordinateur/27.jpeg",
+                "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/Ordinateur/28.jpeg",
+                "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/Ordinateur/29.jpeg",
+                "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/Ordinateur/30.jpeg",
+                "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/Ordinateur/31_1.jpeg",
+                "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/Ordinateur/32_1.jpeg",
+                "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/Ordinateur/33_1.jpeg",
+                "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/Ordinateur/34_1.jpeg",
+                "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/Ordinateur/35_1.jpeg",
+                "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/Ordinateur/36_1.jpeg",
+                "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/Ordinateur/39_1.jpeg",
+                "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/Ordinateur/42_1.jpeg"
+            ],
+            // Images pour les autres catégories
+            disquedur: "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/disque.png",
+            usb: "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/cle.png",
+            souris: "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/souris.jpg",
+            clavier: "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/clavier.jpeg",
+            modem: "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/modems.jpeg",
+            desktop: "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/desktops.jpeg",
+            ram: "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/RAM.png",
+            antivirus: "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/virus.png",
+            videoprojecteur: "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/projeteur.jpg",
+            telephone: "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/phone.jpeg",
+            adaptateur: "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/adaptateur.jpeg",
+            television: "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/t%C3%A9l%C3%A9vision.jpg",
+            chargeur: "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/chargeur.png",
+            sac: "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/sacs.png"
+        };
+
+        // Fonction pour obtenir l'URL de l'image d'un produit
+        function getProductImageUrl(product, index) {
+            if (product.category === "ordinateur") {
+                // Pour les ordinateurs, utiliser l'index pour sélectionner l'image
+                const imageIndex = (product.id - 1) % categoryImages.ordinateur.length;
+                return categoryImages.ordinateur[imageIndex];
+            } else if (categoryImages[product.category]) {
+                // Pour les autres catégories, utiliser l'image de la catégorie
+                return categoryImages[product.category];
+            } else {
+                // Image par défaut si aucune image n'est trouvée
+                return "https://raw.githubusercontent.com/exaucenapopolo/KDO-SHOP/refs/heads/main/Photo/89_1.jpg";
+            }
+        }
+
+        // Modèles de description pour chaque catégorie
+        const categoryDetails = {
+            ordinateur: [
+                { label: "Modèle", value: "Latitude 3190" },
+                { label: "Taille disque", value: "128 Go" },
+                { label: "Type de disque", value: "SSD" },
+                { label: "RAM", value: "8 Go" },
+                { label: "CPU", value: "INTEL CELERON" },
+                { label: "Fréquence", value: "1.10 Ghz" },
+                { label: "Dédiée", value: "128 Mo Intel Graphique" },
+                { label: "Génération", value: "5 ème" },
+                { label: "Taille d'écran", value: "11 ''" },
+                { label: "Autonomie", value: "4 heures" },
+                { label: "Etat", value: "Occasion-propre" },
+                { label: "Clavier", value: "QWERTY" },
+                { label: "Ports USB", value: "2 PORTS USB" },
+                { label: "Webcam", value: "OUI" },
+                { label: "Bluetooh", value: "OUI" },
+                { label: "Wifi", value: "OUI" },
+                { label: "Port HDMI", value: "OUI" },
+                { label: "Port VGA", value: "NON" },
+                { label: "Système", value: "Windows 10 Professionnel X64 Bit" },
+                { label: "Catégorie ordinateur", value: "LAPTOP" }
+            ],
+            disquedur: [
+                { label: "Vitèsse", value: "3.0" },
+                { label: "Capacité", value: "500 Go" },
+                { label: "Type de mémoire", value: "HDD Externe" },
+                { label: "Connecteur", value: "USB" },
+                { label: "Etat", value: "Neuf" }
+            ],
+            usb: [
+                { label: "Vitèsse", value: "2.0" },
+                { label: "Capacité", value: "64 Go" },
+                { label: "Type de mémoire", value: "CLE USB" },
+                { label: "Connecteur", value: "USB" },
+                { label: "Etat", value: "Neuf" }
+            ],
+            souris: [
+                { label: "Type de souris", value: "SANS FIL" },
+                { label: "Connecteur", value: "USB" },
+                { label: "Etat", value: "Neuf" }
+            ],
+            clavier: [
+                { label: "Langue", value: "QWERTY" },
+                { label: "Type de clavier", value: "SANS FIL" },
+                { label: "Rétro-éclairé", value: "NON" },
+                { label: "Pavé Numérique", value: "OUI" },
+                { label: "Connecteur", value: "USB" },
+                { label: "Etat", value: "Neuf" }
+            ],
+            modem: [
+                { label: "Bande passante", value: "300 Mbps" },
+                { label: "Distance", value: "20 Mètre(s)" },
+                { label: "Nombre d'utilisateur(s)", value: "32" },
+                { label: "SIM", value: "Tous Réseaux (MTN, ORANGE, NEXTELL, YOMEE, CAMTEL)" },
+                { label: "Etat", value: "Neuf" }
+            ],
+            desktop: [
+                { label: "Modèle", value: "Elitebook" },
+                { label: "Taille disque", value: "500 Go" },
+                { label: "Type de disque", value: "HDD" },
+                { label: "RAM", value: "4 Go" },
+                { label: "CPU", value: "CORE I5" },
+                { label: "Fréquence", value: "3.3 Ghz" },
+                { label: "Dédiée", value: "128 Mo Intel Graphique" },
+                { label: "Génération", value: "4 ème" },
+                { label: "Taille d'écran", value: "19 ''" },
+                { label: "Etat", value: "Occasion-propre" },
+                { label: "Clavier", value: "AZERTY" },
+                { label: "Ports USB", value: "7 PORTS USB" },
+                { label: "Webcam", value: "NON" },
+                { label: "Bluetooh", value: "NON" },
+                { label: "Wifi", value: "NON" },
+                { label: "Port HDMI", value: "NON" },
+                { label: "Port VGA", value: "OUI" },
+                { label: "Système", value: "Windows 10 Professionnel X64 Bit" },
+                { label: "Catégorie ordinateur", value: "DESKTOP" }
+            ],
+            ram: [
+                { label: "Fréquence", value: "1600-4800 Mhz" },
+                { label: "Capacité", value: "8 Go" },
+                { label: "Type ordinateur", value: "Laptop" },
+                { label: "Etat", value: "Neuf" }
+            ],
+            antivirus: [
+                { label: "Nombre de poste(s)", value: "2" },
+                { label: "Installation sur un (01) poste", value: "5000 XAF" },
+                { label: "Période valide", value: "1 an(s)" },
+                { label: "Protection en temps réel", value: "OUI" },
+                { label: "Protection sur internet", value: "OUI" },
+                { label: "Protection paiement en ligne", value: "OUI" },
+                { label: "Optimisation de l'ordinateur", value: "OUI" },
+                { label: "VPN sécurisé", value: "OUI" },
+                { label: "Filtrage de contenu", value: "OUI" },
+                { label: "Bloqueur de publicité", value: "OUI" },
+                { label: "Anti-pushing", value: "OUI" }
+            ],
+            videoprojecteur: [
+                { label: "Connecteur vidéo", value: "VGA / HDMI" },
+                { label: "Distance de projection", value: "9 Mètre(s)" },
+                { label: "Luminosité", value: "3200" },
+                { label: "Résolution", value: "460 X 845" },
+                { label: "Etat", value: "Occasion-propre" }
+            ],
+            telephone: [
+                { label: "Modèle", value: "X718" },
+                { label: "Memoire", value: "256 Go" },
+                { label: "RAM", value: "8 Go" },
+                { label: "Système d'exploitation", value: "ANDROID" },
+                { label: "Type de téléphone", value: "TACTILE" },
+                { label: "Autonomie battérie", value: "7 heures" },
+                { label: "Bout du chargeur", value: "Android" },
+                { label: "Taille téléphone", value: "7 ''" },
+                { label: "Caméra avant", value: "5 pixel" },
+                { label: "Caméra arrière", value: "8 pixel" },
+                { label: "CPU", value: "2.5 Ghz" },
+                { label: "Empreinte", value: "NON" },
+                { label: "Face ID", value: "NON" },
+                { label: "Nombre de SIM", value: "1" },
+                { label: "Wifi", value: "OUI" },
+                { label: "Bluetooth", value: "OUI" }
+            ],
+            adaptateur: [
+                { label: "Modèle", value: "Mixte" },
+                { label: "Bout d'entrée", value: "VGA" },
+                { label: "Bout de sortie", value: "HDMI" },
+                { label: "Nombre de sortie(s)", value: "1" }
+            ],
+            television: [
+                { label: "Taille", value: '32" pouces' },
+                { label: "Smart", value: "OUI" },
+                { label: "Ecran tactile", value: "NON" },
+                { label: "Entrée Câble TV", value: "OUI" },
+                { label: "Entrée HDMI", value: "NON" },
+                { label: "Entrée DVD", value: "OUI" },
+                { label: "Entrée VGA", value: "NON" },
+                { label: "Entrée USB", value: "OUI" }
+            ],
+            chargeur: [
+                { label: "Tension", value: "12 V" },
+                { label: "Intensité", value: "4.3 A" },
+                { label: "Bout chargeur", value: "petit bout rond noir" }
+            ],
+            sac: [
+                { label: "Taille", value: '14" pouces' },
+                { label: "Couleur", value: "Gris" },
+                { label: "Type sacs", value: "Malètte" },
+                { label: "Nombre poches", value: "5" }
+            ]
+        };
+
+        // Données des produits basées sur les nouveaux articles fournis
+        const products = [
+            // ORDINATEURS PORTABLES (39 produits)
+            { id: 1, name: "DELL Latitude 3190", price: 65000, oldPrice: 80000, category: "ordinateur", verified: true, image: "laptop", orders: 245, specs: "Procésseur: INTEL CELERON, HDD: 128 Go, RAM: 8 Go", details: categoryDetails.ordinateur },
+            { id: 2, name: "HP Elitebook 840 G3", price: 160000, oldPrice: 175000, category: "ordinateur", verified: true, image: "laptop", orders: 189, specs: "Procésseur: CORE I5, HDD: 256 Go, RAM: 8 Go", details: categoryDetails.ordinateur },
+            { id: 3, name: "LENOVO V15 G2 IJL", price: 180000, oldPrice: 195000, category: "ordinateur", verified: true, image: "laptop", orders: 156, specs: "Procésseur: INTEL CELERON, HDD: 256 Go, RAM: 4 Go", details: categoryDetails.ordinateur },
+            { id: 4, name: "DELL Latitude 3380", price: 110000, oldPrice: 125000, category: "ordinateur", verified: true, image: "laptop", orders: 134, specs: "Procésseur: CORE I3, HDD: 128 Go, RAM: 8 Go", details: categoryDetails.ordinateur },
+            { id: 5, name: "HP Elitebook Folio", price: 110000, oldPrice: 125000, category: "ordinateur", verified: true, image: "laptop", orders: 178, specs: "Procésseur: CORE I5, HDD: 500 Go, RAM: 8 Go", details: categoryDetails.ordinateur },
+            { id: 6, name: "HP Probook 645", price: 115000, oldPrice: 130000, category: "ordinateur", verified: true, image: "laptop", orders: 156, specs: "Procésseur: AMD A4, HDD: 8 Go, RAM: 8 Go", details: categoryDetails.ordinateur },
+            { id: 7, name: "LENOVO Thinkpad X130e", price: 65000, oldPrice: 80000, category: "ordinateur", verified: true, image: "laptop", orders: 201, specs: "Procésseur: AMD A2, HDD: 250 Go, RAM: 4 Go", details: categoryDetails.ordinateur },
+            { id: 8, name: "LENOVO Thinkpad P50s", price: 210000, oldPrice: 225000, category: "ordinateur", verified: true, image: "laptop", orders: 89, specs: "Procésseur: CORE I7, HDD: 512 Go, RAM: 16 Go", details: categoryDetails.ordinateur },
+            { id: 9, name: "DELL Latitude E5580", price: 230000, oldPrice: 245000, category: "ordinateur", verified: true, image: "laptop", orders: 67, specs: "Procésseur: CORE I7, HDD: 512 Go, RAM: 16 Go", details: categoryDetails.ordinateur },
+            { id: 10, name: "SONY SVF152A29M", price: 150000, oldPrice: 165000, category: "ordinateur", verified: true, image: "laptop", orders: 123, specs: "Procésseur: CORE I5, HDD: 500 Go, RAM: 8 Go", details: categoryDetails.ordinateur },
+            { id: 11, name: "LENOVO Thinkpad E560", price: 130000, oldPrice: 145000, category: "ordinateur", verified: true, image: "laptop", orders: 145, specs: "Procésseur: CORE I5, HDD: 500 Go, RAM: 12 Go", details: categoryDetails.ordinateur },
+            { id: 12, name: "LENOVO 11E", price: 90000, oldPrice: 105000, category: "ordinateur", verified: true, image: "laptop", orders: 167, specs: "Procésseur: CORE I3, HDD: 128 Go, RAM: 4 Go", details: categoryDetails.ordinateur },
+            { id: 13, name: "HP Chrome Book", price: 50000, oldPrice: 65000, category: "ordinateur", verified: true, image: "laptop", orders: 189, specs: "Procésseur: INTEL CELERON, HDD: 128 Go, RAM: 4 Go", details: categoryDetails.ordinateur },
+            { id: 14, name: "HP Probook 645 G3", price: 115000, oldPrice: 130000, category: "ordinateur", verified: true, image: "laptop", orders: 156, specs: "Procésseur: AMD A6, HDD: 500 Go, RAM: 8 Go", details: categoryDetails.ordinateur },
+            { id: 15, name: "HP Zbook 15 G3", price: 160000, oldPrice: 175000, category: "ordinateur", verified: true, image: "laptop", orders: 98, specs: "Procésseur: CORE I7, HDD: 750 Go, RAM: 16 Go", details: categoryDetails.ordinateur },
+            { id: 16, name: "HP 11 Stream", price: 50000, oldPrice: 65000, category: "ordinateur", verified: true, image: "laptop", orders: 201, specs: "Procésseur: INTEL CELERON, HDD: 128 Go, RAM: 4 Go", details: categoryDetails.ordinateur },
+            { id: 17, name: "LENOVO 11e", price: 80000, oldPrice: 95000, category: "ordinateur", verified: true, image: "laptop", orders: 178, specs: "Procésseur: QUADCORE, HDD: 320 Go, RAM: 8 Go", details: categoryDetails.ordinateur },
+            { id: 18, name: "LENOVO T480", price: 150000, oldPrice: 165000, category: "ordinateur", verified: true, image: "laptop", orders: 134, specs: "Procésseur: CORE I5, HDD: 256 Go, RAM: 8 Go", details: categoryDetails.ordinateur },
+            { id: 19, name: "HP Probook 650 G2", price: 120000, oldPrice: 135000, category: "ordinateur", verified: true, image: "laptop", orders: 145, specs: "Procésseur: AMD A6, HDD: 500 Go, RAM: 8 Go", details: categoryDetails.ordinateur },
+            { id: 20, name: "LENOVO Thinkpad X270", price: 150000, oldPrice: 165000, category: "ordinateur", verified: true, image: "laptop", orders: 123, specs: "Procésseur: CORE I5, HDD: 500 Go, RAM: 8 Go", details: categoryDetails.ordinateur },
+            { id: 21, name: "HP 6560b", price: 110000, oldPrice: 125000, category: "ordinateur", verified: true, image: "laptop", orders: 167, specs: "Procésseur: CORE I5, HDD: 500 Go, RAM: 4 Go", details: categoryDetails.ordinateur },
+            { id: 22, name: "HP X360", price: 85000, oldPrice: 100000, category: "ordinateur", verified: true, image: "laptop", orders: 189, specs: "Procésseur: QUADCORE, HDD: 128 Go, RAM: 4 Go", details: categoryDetails.ordinateur },
+            { id: 23, name: "DELL Vostro 5568", price: 150000, oldPrice: 165000, category: "ordinateur", verified: true, image: "laptop", orders: 156, specs: "Procésseur: CORE I5, HDD: 1000 Go, RAM: 8 Go", details: categoryDetails.ordinateur },
+            { id: 24, name: "DELL Latitude 5440", price: 150000, oldPrice: 165000, category: "ordinateur", verified: true, image: "laptop", orders: 134, specs: "Procésseur: CORE I5, HDD: 500 Go, RAM: 8 Go", details: categoryDetails.ordinateur },
+            { id: 25, name: "DELL Latitude 3190 2-in-1", price: 80000, oldPrice: 95000, category: "ordinateur", verified: true, image: "laptop", orders: 178, specs: "Procésseur: Intel(R) Atom, HDD: 128 Go, RAM: 4 Go", details: categoryDetails.ordinateur },
+            { id: 26, name: "LENOVO 11E", price: 70000, oldPrice: 85000, category: "ordinateur", verified: true, image: "laptop", orders: 201, specs: "Procésseur: Intel(R) Atom, HDD: 128 Go, RAM: 4 Go", details: categoryDetails.ordinateur },
+            { id: 27, name: "DELL Latitude E5520", price: 125000, oldPrice: 140000, category: "ordinateur", verified: true, image: "laptop", orders: 145, specs: "Procésseur: CORE I3, HDD: 500 Go, RAM: 8 Go", details: categoryDetails.ordinateur },
+            { id: 28, name: "TOSHIBA NB250-108", price: 65000, oldPrice: 80000, category: "ordinateur", verified: true, image: "laptop", orders: 189, specs: "Procésseur: Intel(R) Atom, HDD: 250 Go, RAM: 2 Go", details: categoryDetails.ordinateur },
+            { id: 29, name: "HP ProBook 640 G1", price: 130000, oldPrice: 145000, category: "ordinateur", verified: true, image: "laptop", orders: 123, specs: "Procésseur: CORE I7, HDD: 500 Go, RAM: 8 Go", details: categoryDetails.ordinateur },
+            { id: 30, name: "HP Elitebook 840 G6", price: 210000, oldPrice: 225000, category: "ordinateur", verified: true, image: "laptop", orders: 89, specs: "Procésseur: CORE I5, HDD: 256 Go, RAM: 16 Go", details: categoryDetails.ordinateur },
+            { id: 31, name: "HP EliteBook 845 G7", price: 270000, oldPrice: 285000, category: "ordinateur", verified: true, image: "laptop", orders: 67, specs: "Procésseur: AMD Ryzen 5 PRO, HDD: 512 Go, RAM: 16 Go", details: categoryDetails.ordinateur },
+            { id: 32, name: "HP MINI 3115m", price: 90000, oldPrice: 105000, category: "ordinateur", verified: true, image: "laptop", orders: 145, specs: "Procésseur: AMD A2, HDD: 500 Go, RAM: 4 Go", details: categoryDetails.ordinateur },
+            { id: 33, name: "DELL Latitude E6540", price: 130000, oldPrice: 145000, category: "ordinateur", verified: true, image: "laptop", orders: 123, specs: "Procésseur: CORE I5, HDD: 1000 Go, RAM: 8 Go", details: categoryDetails.ordinateur },
+            { id: 34, name: "HP Folio", price: 195000, oldPrice: 210000, category: "ordinateur", verified: true, image: "laptop", orders: 98, specs: "Procésseur: CORE I7, HDD: 500 Go, RAM: 16 Go", details: categoryDetails.ordinateur },
+            { id: 35, name: "LENOVO Yoga 11e X360", price: 80000, oldPrice: 95000, category: "ordinateur", verified: true, image: "laptop", orders: 167, specs: "Procésseur: QUADCORE, HDD: 320 Go, RAM: 4 Go", details: categoryDetails.ordinateur },
+            { id: 36, name: "HP Elitebook I 840 G3", price: 250000, oldPrice: 265000, category: "ordinateur", verified: true, image: "laptop", orders: 78, specs: "Procésseur: CORE I5, HDD: 256 Go, RAM: 8 Go", details: categoryDetails.ordinateur },
+            { id: 37, name: "LENOVO Thinkpad W540", price: 205000, oldPrice: 220000, category: "ordinateur", verified: true, image: "laptop", orders: 67, specs: "Procésseur: CORE I7, HDD: 1000 Go, RAM: 16 Go", details: categoryDetails.ordinateur },
+            { id: 38, name: "HP Probook 11 G2", price: 90000, oldPrice: 105000, category: "ordinateur", verified: true, image: "laptop", orders: 145, specs: "Procésseur: CORE I3, HDD: 128 Go, RAM: 8 Go", details: categoryDetails.ordinateur },
+            
+            // DISQUES DURS (20 produits)
+            { id: 39, name: "TOSHIBA Disque Dur", price: 15000, oldPrice: 18500, category: "disquedur", verified: true, image: "hdd", orders: 456, specs: "Taille: 500 Go", details: categoryDetails.disquedur },
+            { id: 40, name: "SEAGATE Disque Dur", price: 25000, oldPrice: 28500, category: "disquedur", verified: true, image: "hdd", orders: 389, specs: "Taille: 1000 Go", details: categoryDetails.disquedur },
+            { id: 41, name: "SEAGATE Disque Dur", price: 45000, oldPrice: 48500, category: "disquedur", verified: true, image: "hdd", orders: 234, specs: "Taille: 2000 Go", details: categoryDetails.disquedur },
+            { id: 42, name: "TOSHIBA Disque Dur", price: 25000, oldPrice: 28500, category: "disquedur", verified: true, image: "hdd", orders: 378, specs: "Taille: 1000 Go", details: categoryDetails.disquedur },
+            { id: 43, name: "TOSHIBA Disque Dur", price: 20000, oldPrice: 23500, category: "disquedur", verified: true, image: "hdd", orders: 412, specs: "Taille: 1000 Go", details: categoryDetails.disquedur },
+            { id: 44, name: "TOSHIBA Disque Dur", price: 40000, oldPrice: 43500, category: "disquedur", verified: true, image: "hdd", orders: 189, specs: "Taille: 2000 Go", details: categoryDetails.disquedur },
+            { id: 45, name: "Portable SSD", price: 65000, oldPrice: 68500, category: "disquedur", verified: true, image: "ssd", orders: 156, specs: "Taille: 2000 Go", details: categoryDetails.disquedur },
+            { id: 46, name: "VERBATIM SSD", price: 35000, oldPrice: 38500, category: "disquedur", verified: true, image: "ssd", orders: 267, specs: "Taille: 512 Go", details: categoryDetails.disquedur },
+            { id: 47, name: "ADDLINK SSD", price: 45000, oldPrice: 48500, category: "disquedur", verified: true, image: "ssd", orders: 189, specs: "Taille: 1000 Go", details: categoryDetails.disquedur },
+            { id: 48, name: "ADDLINK SSD", price: 65000, oldPrice: 68500, category: "disquedur", verified: true, image: "ssd", orders: 134, specs: "Taille: 2000 Go", details: categoryDetails.disquedur },
+            { id: 49, name: "SAMSUNG SSD", price: 22000, oldPrice: 25500, category: "disquedur", verified: true, image: "ssd", orders: 456, specs: "Taille: 256 Go", details: categoryDetails.disquedur },
+            { id: 50, name: "SAMSUNG SSD", price: 45000, oldPrice: 48500, category: "disquedur", verified: true, image: "ssd", orders: 289, specs: "Taille: 1000 Go", details: categoryDetails.disquedur },
+            { id: 51, name: "ADDLINK SSD", price: 35000, oldPrice: 38500, category: "disquedur", verified: true, image: "ssd", orders: 234, specs: "Taille: 512 Go", details: categoryDetails.disquedur },
+            { id: 52, name: "ADDLINK SSD", price: 20000, oldPrice: 23500, category: "disquedur", verified: true, image: "ssd", orders: 378, specs: "Taille: 256 Go", details: categoryDetails.disquedur },
+            { id: 53, name: "UNION MEMORY SSD", price: 22000, oldPrice: 25500, category: "disquedur", verified: true, image: "ssd", orders: 267, specs: "Taille: 256 Go", details: categoryDetails.disquedur },
+            { id: 54, name: "WESTERN DIGITAL HDD", price: 10000, oldPrice: 13500, category: "disquedur", verified: true, image: "hdd", orders: 512, specs: "Taille: 500 Go", details: categoryDetails.disquedur },
+            { id: 55, name: "WESTERN DIGITAL HDD", price: 8000, oldPrice: 11500, category: "disquedur", verified: true, image: "hdd", orders: 567, specs: "Taille: 320 Go", details: categoryDetails.disquedur },
+            { id: 56, name: "WESTERN DIGITAL HDD", price: 6000, oldPrice: 9500, category: "disquedur", verified: true, image: "hdd", orders: 589, specs: "Taille: 250 Go", details: categoryDetails.disquedur },
+            { id: 57, name: "EXTERNAL CASE", price: 15000, oldPrice: 18500, category: "disquedur", verified: true, image: "case", orders: 345, specs: "Taille: 500 Go", details: categoryDetails.disquedur },
+            { id: 58, name: "TOSHIBA HDD", price: 15000, oldPrice: 18500, category: "disquedur", verified: true, image: "hdd", orders: 456, specs: "Taille: 500 Go", details: categoryDetails.disquedur },
+            
+            // CLÉS USB (7 produits)
+            { id: 59, name: "FASTER Clé USB", price: 5500, oldPrice: 9000, category: "usb", verified: true, image: "usb", orders: 678, specs: "Taille: 64 Go", details: categoryDetails.usb },
+            { id: 60, name: "FASTER Clé USB", price: 4000, oldPrice: 7500, category: "usb", verified: true, image: "usb", orders: 789, specs: "Taille: 32 Go", details: categoryDetails.usb },
+            { id: 61, name: "Kioxia Clé USB", price: 4000, oldPrice: 7500, category: "usb", verified: true, image: "usb", orders: 645, specs: "Taille: 32 Go", details: categoryDetails.usb },
+            { id: 62, name: "Kioxia Clé USB", price: 5500, oldPrice: 9000, category: "usb", verified: true, image: "usb", orders: 567, specs: "Taille: 64 Go", details: categoryDetails.usb },
+            { id: 63, name: "FASTER Clé USB", price: 5500, oldPrice: 9000, category: "usb", verified: true, image: "usb", orders: 612, specs: "Taille: 64 Go", details: categoryDetails.usb },
+            { id: 64, name: "IMATION Clé USB", price: 4000, oldPrice: 7500, category: "usb", verified: true, image: "usb", orders: 534, specs: "Taille: 32 Go", details: categoryDetails.usb },
+            { id: 65, name: "Flash Driver USB", price: 7000, oldPrice: 10500, category: "usb", verified: true, image: "usb", orders: 456, specs: "Taille: 32 Go", details: categoryDetails.usb },
+            
+            // SOURIS (12 produits)
+            { id: 66, name: "HP Souris USB", price: 5000, oldPrice: 6500, category: "souris", verified: true, image: "mouse", orders: 789, specs: "Type de souris: SANS FIL", details: categoryDetails.souris },
+            { id: 67, name: "TRUST Souris USB", price: 5000, oldPrice: 6500, category: "souris", verified: true, image: "mouse", orders: 678, specs: "Type de souris: SANS FIL", details: categoryDetails.souris },
+            { id: 68, name: "HP Souris USB", price: 3000, oldPrice: 4500, category: "souris", verified: true, image: "mouse", orders: 912, specs: "Type de souris: AVEC FIL", details: categoryDetails.souris },
+            { id: 69, name: "GENIUS Souris USB", price: 3000, oldPrice: 4500, category: "souris", verified: true, image: "mouse", orders: 834, specs: "Type de souris: AVEC FIL", details: categoryDetails.souris },
+            { id: 70, name: "HP Souris USB", price: 3000, oldPrice: 4500, category: "souris", verified: true, image: "mouse", orders: 756, specs: "Type de souris: AVEC FIL", details: categoryDetails.souris },
+            { id: 71, name: "DELL Souris USB", price: 2500, oldPrice: 4000, category: "souris", verified: true, image: "mouse", orders: 945, specs: "Type de souris: AVEC FIL", details: categoryDetails.souris },
+            { id: 72, name: "HP Souris USB", price: 2500, oldPrice: 4000, category: "souris", verified: true, image: "mouse", orders: 867, specs: "Type de souris: AVEC FIL", details: categoryDetails.souris },
+            { id: 73, name: "HP Souris USB", price: 5000, oldPrice: 6500, category: "souris", verified: true, image: "mouse", orders: 723, specs: "Type de souris: SANS FIL", details: categoryDetails.souris },
+            { id: 74, name: "LENOVO Souris USB", price: 2500, oldPrice: 4000, category: "souris", verified: true, image: "mouse", orders: 912, specs: "Type de souris: AVEC FIL", details: categoryDetails.souris },
+            { id: 75, name: "LOGITECH Souris USB", price: 4500, oldPrice: 6000, category: "souris", verified: true, image: "mouse", orders: 645, specs: "Type de souris: SANS FIL", details: categoryDetails.souris },
+            { id: 76, name: "HP Souris USB", price: 4000, oldPrice: 5500, category: "souris", verified: true, image: "mouse", orders: 723, specs: "Type de souris: SANS FIL", details: categoryDetails.souris },
+            { id: 77, name: "SONY Souris USB", price: 3000, oldPrice: 4500, category: "souris", verified: true, image: "mouse", orders: 834, specs: "Type de souris: AVEC FIL", details: categoryDetails.souris },
+            
+            // CLAVIERS (7 produits)
+            { id: 78, name: "LOGITECH Clavier USB", price: 10000, oldPrice: 11500, category: "clavier", verified: true, image: "keyboard", orders: 456, specs: "Type clavier: SANS FIL", details: categoryDetails.clavier },
+            { id: 79, name: "HP Clavier USB", price: 10000, oldPrice: 11500, category: "clavier", verified: true, image: "keyboard", orders: 423, specs: "Type clavier: SANS FIL", details: categoryDetails.clavier },
+            { id: 80, name: "LOGITECH Clavier USB", price: 2500, oldPrice: 4000, category: "clavier", verified: true, image: "keyboard", orders: 789, specs: "Type clavier: AVEC FIL", details: categoryDetails.clavier },
+            { id: 81, name: "GAMERS Clavier USB", price: 10000, oldPrice: 11500, category: "clavier", verified: true, image: "keyboard", orders: 345, specs: "Type clavier: SANS FIL", details: categoryDetails.clavier },
+            { id: 82, name: "GAMERS Clavier USB", price: 15000, oldPrice: 16500, category: "clavier", verified: true, image: "keyboard", orders: 267, specs: "Type clavier: AVEC FIL", details: categoryDetails.clavier },
+            { id: 83, name: "HP Clavier USB", price: 3000, oldPrice: 4500, category: "clavier", verified: true, image: "keyboard", orders: 612, specs: "Type clavier: AVEC FIL", details: categoryDetails.clavier },
+            { id: 84, name: "FLEXIBLE KEYBOARD USB", price: 6000, oldPrice: 7500, category: "clavier", verified: true, image: "keyboard", orders: 489, specs: "Type clavier: AVEC FIL", details: categoryDetails.clavier },
+            
+            // MODEMS (5 produits)
+            { id: 85, name: "KING CRAB Modem", price: 35000, oldPrice: 40000, category: "modem", verified: true, image: "wifi", orders: 189, specs: "Bande passante: 300 Mbps", details: categoryDetails.modem },
+            { id: 86, name: "HUAWEI Modem", price: 17500, oldPrice: 22500, category: "modem", verified: true, image: "wifi", orders: 456, specs: "Bande passante: 100 Mbps", details: categoryDetails.modem },
+            { id: 87, name: "HUAWEI Modem", price: 17500, oldPrice: 22500, category: "modem", verified: true, image: "wifi", orders: 423, specs: "Bande passante: 100 Mbps", details: categoryDetails.modem },
+            { id: 88, name: "HUAWEI Modem", price: 17500, oldPrice: 22500, category: "modem", verified: true, image: "wifi", orders: 378, specs: "Bande passante: 100 Mbps", details: categoryDetails.modem },
+            { id: 89, name: "HUAWEI Modem", price: 21000, oldPrice: 26000, category: "modem", verified: true, image: "wifi", orders: 267, specs: "Bande passante: 200 Mbps", details: categoryDetails.modem },
+            
+            // DESKTOP (6 produits)
+            { id: 90, name: "HP Elitebook Desktop", price: 95000, oldPrice: 110000, category: "desktop", verified: true, image: "desktop", orders: 156, specs: "Procésseur: CORE I5, HDD: 500 Go, RAM: 4 Go", details: categoryDetails.desktop },
+            { id: 91, name: "FUJITSU N12 Desktop", price: 55000, oldPrice: 70000, category: "desktop", verified: true, image: "desktop", orders: 234, specs: "Procésseur: DUALCORE, HDD: 500 Go, RAM: 4 Go", details: categoryDetails.desktop },
+            { id: 92, name: "FUJITSU C11 Desktop", price: 70000, oldPrice: 85000, category: "desktop", verified: true, image: "desktop", orders: 189, specs: "Procésseur: CORE I3, HDD: 320 Go, RAM: 4 Go", details: categoryDetails.desktop },
+            { id: 93, name: "DELL Latitude Desktop", price: 55000, oldPrice: 70000, category: "desktop", verified: true, image: "desktop", orders: 201, specs: "Procésseur: DUALCORE, HDD: 320 Go, RAM: 4 Go", details: categoryDetails.desktop },
+            { id: 94, name: "ASUS Vo1 Desktop", price: 70000, oldPrice: 85000, category: "desktop", verified: true, image: "desktop", orders: 167, specs: "Procésseur: CORE I3, HDD: 320 Go, RAM: 4 Go", details: categoryDetails.desktop },
+            { id: 95, name: "ACER Aspire Desktop", price: 70000, oldPrice: 85000, category: "desktop", verified: true, image: "desktop", orders: 178, specs: "Procésseur: CORE I3, HDD: 500 Go, RAM: 4 Go", details: categoryDetails.desktop },
+            
+            // RAM (12 produits)
+            { id: 96, name: "DDR3L 1600-4800 Mhz", price: 14000, oldPrice: 15500, category: "ram", verified: true, image: "memory", orders: 456, specs: "Laptop Go & RAM: 8 Go", details: categoryDetails.ram },
+            { id: 97, name: "DDR4 3200-4800 Mhz", price: 28000, oldPrice: 29500, category: "ram", verified: true, image: "memory", orders: 267, specs: "Laptop Go & RAM: 16 Go", details: categoryDetails.ram },
+            { id: 98, name: "DDR3L 1600-4800 Mhz", price: 20000, oldPrice: 21500, category: "ram", verified: true, image: "memory", orders: 345, specs: "Laptop Go & RAM: 16 Go", details: categoryDetails.ram },
+            { id: 99, name: "DDR4 2400-3200 Mhz", price: 11000, oldPrice: 12500, category: "ram", verified: true, image: "memory", orders: 567, specs: "Laptop Go & RAM: 4 Go", details: categoryDetails.ram },
+            { id: 100, name: "DDR2 200-400 Mhz", price: 3000, oldPrice: 4500, category: "ram", verified: true, image: "memory", orders: 789, specs: "Laptop Go & RAM: 1 Go", details: categoryDetails.ram },
+            { id: 101, name: "DDR4 2400-3200 Mhz", price: 25000, oldPrice: 26500, category: "ram", verified: true, image: "memory", orders: 234, specs: "Laptop Go & RAM: 8 Go", details: categoryDetails.ram },
+            { id: 102, name: "DDR2 4800-7200 Mhz", price: 5000, oldPrice: 6500, category: "ram", verified: true, image: "memory", orders: 456, specs: "Laptop Go & RAM: 2 Go", details: categoryDetails.ram },
+            { id: 103, name: "DDR2 800-2133 Mhz", price: 5000, oldPrice: 6500, category: "ram", verified: true, image: "memory", orders: 378, specs: "Desktop Go & RAM: 2 Go", details: categoryDetails.ram },
+            { id: 104, name: "DDR2 400-1066 Mhz", price: 3000, oldPrice: 4500, category: "ram", verified: true, image: "memory", orders: 567, specs: "Desktop Go & RAM: 1 Go", details: categoryDetails.ram },
+            { id: 105, name: "DDR3 2400-3200 Mhz", price: 14000, oldPrice: 15500, category: "ram", verified: true, image: "memory", orders: 345, specs: "Desktop Go & RAM: 8 Go", details: categoryDetails.ram },
+            { id: 106, name: "DDR3 2400-3200 Mhz", price: 8000, oldPrice: 9500, category: "ram", verified: true, image: "memory", orders: 489, specs: "Desktop Go & RAM: 4 Go", details: categoryDetails.ram },
+            { id: 107, name: "DDR3 3200-4800 Mhz", price: 28000, oldPrice: 29500, category: "ram", verified: true, image: "memory", orders: 234, specs: "Desktop Go & RAM: 16 Go", details: categoryDetails.ram },
+            
+            // ANTIVIRUS (10 produits)
+            { id: 108, name: "KASPERSKY Antivirus", price: 15000, oldPrice: 17500, category: "antivirus", verified: true, image: "shield", orders: 456, specs: "2 postes valide 1 an(s)", details: categoryDetails.antivirus },
+            { id: 109, name: "KASPERSKY Antivirus", price: 19000, oldPrice: 21500, category: "antivirus", verified: true, image: "shield", orders: 345, specs: "4 postes valide 1 an(s)", details: categoryDetails.antivirus },
+            { id: 110, name: "KASPERSKY Antivirus", price: 18000, oldPrice: 20500, category: "antivirus", verified: true, image: "shield", orders: 378, specs: "4 postes valide 1 an(s)", details: categoryDetails.antivirus },
+            { id: 111, name: "KASPERSKY Antivirus", price: 18000, oldPrice: 20500, category: "antivirus", verified: true, image: "shield", orders: 267, specs: "4 postes valide 1 an(s)", details: categoryDetails.antivirus },
+            { id: 112, name: "KASPERSKY Antivirus", price: 18000, oldPrice: 20500, category: "antivirus", verified: true, image: "shield", orders: 312, specs: "4 postes valide 1 an(s)", details: categoryDetails.antivirus },
+            { id: 113, name: "KASPERSKY Antivirus", price: 25000, oldPrice: 27500, category: "antivirus", verified: true, image: "shield", orders: 189, specs: "5 postes valide 2 an(s)", details: categoryDetails.antivirus },
+            { id: 114, name: "NORTON Antivirus", price: 30000, oldPrice: 32500, category: "antivirus", verified: true, image: "shield", orders: 156, specs: "9 postes valide 1 an(s)", details: categoryDetails.antivirus },
+            { id: 115, name: "NORTON Antivirus", price: 19000, oldPrice: 21500, category: "antivirus", verified: true, image: "shield", orders: 234, specs: "4 postes valide 1 an(s)", details: categoryDetails.antivirus },
+            { id: 116, name: "NORTON Antivirus", price: 20000, oldPrice: 22500, category: "antivirus", verified: true, image: "shield", orders: 267, specs: "5 postes valide 1 an(s)", details: categoryDetails.antivirus },
+            { id: 117, name: "KASPERSKY Antivirus", price: 15000, oldPrice: 17500, category: "antivirus", verified: true, image: "shield", orders: 345, specs: "2 postes valide 1 an(s)", details: categoryDetails.antivirus },
+            
+            // PROJECTEURS (8 produits)
+            { id: 118, name: "PHILIPS Projecteur", price: 120000, oldPrice: 130000, category: "videoprojecteur", verified: true, image: "projector", orders: 89, specs: "Connection: VGA / HDMI", details: categoryDetails.videoprojecteur },
+            { id: 119, name: "TOPTRO Projecteur", price: 100000, oldPrice: 110000, category: "videoprojecteur", verified: true, image: "projector", orders: 123, specs: "Connection: VGA / HDMI", details: categoryDetails.videoprojecteur },
+            { id: 120, name: "PANASONIC Projecteur", price: 110000, oldPrice: 120000, category: "videoprojecteur", verified: true, image: "projector", orders: 78, specs: "Connection: VGA / HDMI", details: categoryDetails.videoprojecteur },
+            { id: 121, name: "TMY Projecteur", price: 75000, oldPrice: 85000, category: "videoprojecteur", verified: true, image: "projector", orders: 145, specs: "Connection: VGA / HDMI", details: categoryDetails.videoprojecteur },
+            { id: 122, name: "TMY Projecteur", price: 75000, oldPrice: 85000, category: "videoprojecteur", verified: true, image: "projector", orders: 156, specs: "Connection: VGA / HDMI", details: categoryDetails.videoprojecteur },
+            { id: 123, name: "TMY Projecteur", price: 75000, oldPrice: 85000, category: "videoprojecteur", verified: true, image: "projector", orders: 134, specs: "Connection: VGA / HDMI", details: categoryDetails.videoprojecteur },
+            { id: 124, name: "CASIO Projecteur", price: 110000, oldPrice: 120000, category: "videoprojecteur", verified: true, image: "projector", orders: 67, specs: "Connection: VGA / HDMI", details: categoryDetails.videoprojecteur },
+            { id: 125, name: "EPSON Projecteur", price: 100000, oldPrice: 110000, category: "videoprojecteur", verified: true, image: "projector", orders: 89, specs: "Connection: VGA / HDMI", details: categoryDetails.videoprojecteur },
+            
+            // TÉLÉPHONES & TABLETTES (9 produits)
+            { id: 126, name: "I-Touch X718", price: 40000, oldPrice: 48500, category: "telephone", verified: true, image: "mobile", orders: 345, specs: "Memoire: 256 Go & RAM 8 Go", details: categoryDetails.telephone },
+            { id: 127, name: "I-Touch A702", price: 30000, oldPrice: 38500, category: "telephone", verified: true, image: "mobile", orders: 456, specs: "Memoire: 16 Go & RAM 2 Go", details: categoryDetails.telephone },
+            { id: 128, name: "I-Touch B33", price: 30000, oldPrice: 38500, category: "telephone", verified: true, image: "mobile", orders: 423, specs: "Memoire: 16 Go & RAM 2 Go", details: categoryDetails.telephone },
+            { id: 129, name: "LENOVO T8-8505x", price: 55000, oldPrice: 63500, category: "telephone", verified: true, image: "mobile", orders: 189, specs: "Memoire: 32 Go & RAM 4 Go", details: categoryDetails.telephone },
+            { id: 130, name: "C Idea Cm525", price: 35000, oldPrice: 43500, category: "telephone", verified: true, image: "mobile", orders: 267, specs: "Memoire: 64 Go & RAM 4 Go", details: categoryDetails.telephone },
+            { id: 131, name: "I-Touch Yes 24", price: 40000, oldPrice: 48500, category: "telephone", verified: true, image: "mobile", orders: 234, specs: "Memoire: 32 Go & RAM 2 Go", details: categoryDetails.telephone },
+            { id: 132, name: "C Idea 5g Lte", price: 38000, oldPrice: 46500, category: "telephone", verified: true, image: "mobile", orders: 189, specs: "Memoire: 256 Go & RAM 6 Go", details: categoryDetails.telephone },
+            { id: 133, name: "C Idea 5g Lte", price: 35000, oldPrice: 43500, category: "telephone", verified: true, image: "mobile", orders: 156, specs: "Memoire: 64 Go & RAM 4 Go", details: categoryDetails.telephone },
+            
+            // ADAPTATEURS (14 produits)
+            { id: 134, name: "SAMSUNG Adaptateur Mixte", price: 5000, oldPrice: 6500, category: "adaptateur", verified: true, image: "adapter", orders: 567, specs: "Entrée: VGA & Sortie HDMI", details: categoryDetails.adaptateur },
+            { id: 135, name: "HP Adaptateur Mixte", price: 5000, oldPrice: 6500, category: "adaptateur", verified: true, image: "adapter", orders: 489, specs: "Entrée: USB & Sortie USB", details: categoryDetails.adaptateur },
+            { id: 136, name: "HP Adaptateur Mv2", price: 4000, oldPrice: 5500, category: "adaptateur", verified: true, image: "adapter", orders: 612, specs: "Entrée: USB & Sortie ANDROID, IPHONE, TYPE C", details: categoryDetails.adaptateur },
+            { id: 137, name: "SONY Adaptateur T1", price: 3000, oldPrice: 4500, category: "adaptateur", verified: true, image: "adapter", orders: 678, specs: "Entrée: HDMI & Sortie ANDROID", details: categoryDetails.adaptateur },
+            { id: 138, name: "HP Adaptateur Mv2", price: 6000, oldPrice: 7500, category: "adaptateur", verified: true, image: "adapter", orders: 456, specs: "Entrée: HDMI & Sortie USB", details: categoryDetails.adaptateur },
+            { id: 139, name: "ASUS Adaptateur B12", price: 1500, oldPrice: 3000, category: "adaptateur", verified: true, image: "adapter", orders: 789, specs: "Entrée: ANDROID, IPHONE, TYPE C & Sortie USB", details: categoryDetails.adaptateur },
+            { id: 140, name: "SAMSUNG Adaptateur G-14", price: 7000, oldPrice: 8500, category: "adaptateur", verified: true, image: "adapter", orders: 345, specs: "Entrée: HDMI & Sortie VGA", details: categoryDetails.adaptateur },
+            { id: 141, name: "SAMSUNG Adaptateur A", price: 2000, oldPrice: 3500, category: "adaptateur", verified: true, image: "adapter", orders: 912, specs: "Entrée: USB & Sortie ANDROID", details: categoryDetails.adaptateur },
+            { id: 142, name: "SONY Adaptateur A", price: 2000, oldPrice: 3500, category: "adaptateur", verified: true, image: "adapter", orders: 867, specs: "Entrée: USB & Sortie ANDROID", details: categoryDetails.adaptateur },
+            { id: 143, name: "SONY Adaptateur A", price: 2000, oldPrice: 3500, category: "adaptateur", verified: true, image: "adapter", orders: 756, specs: "Entrée: USB & Sortie TYPE C", details: categoryDetails.adaptateur },
+            { id: 144, name: "SONY Adaptateur A", price: 2000, oldPrice: 3500, category: "adaptateur", verified: true, image: "adapter", orders: 834, specs: "Entrée: USB & Sortie TYPE C", details: categoryDetails.adaptateur },
+            { id: 145, name: "HP Adaptateur B1", price: 5000, oldPrice: 6500, category: "adaptateur", verified: true, image: "adapter", orders: 489, specs: "Entrée: USB & Sortie USB", details: categoryDetails.adaptateur },
+            { id: 146, name: "HP Adaptateur B1", price: 6000, oldPrice: 7500, category: "adaptateur", verified: true, image: "adapter", orders: 423, specs: "Entrée: USB & Sortie USB", details: categoryDetails.adaptateur },
+            
+            // TÉLÉVISIONS (4 produits)
+            { id: 147, name: "Lg Télévision", price: 65000, oldPrice: 80000, category: "television", verified: true, image: "tv", orders: 189, specs: "Taille: 32 pouces", details: categoryDetails.television },
+            { id: 148, name: "Lg Télévision", price: 110000, oldPrice: 125000, category: "television", verified: true, image: "tv", orders: 134, specs: "Taille: 43 pouces", details: categoryDetails.television },
+            { id: 149, name: "Lg Télévision", price: 210000, oldPrice: 225000, category: "television", verified: true, image: "tv", orders: 78, specs: "Taille: 55 pouces", details: categoryDetails.television },
+            { id: 150, name: "Samsung Télévision", price: 110000, oldPrice: 125000, category: "television", verified: true, image: "tv", orders: 123, specs: "Taille: 43 pouces", details: categoryDetails.television },
+            
+            // CHARGEURS (6 produits)
+            { id: 151, name: "Toshiba Chargeur", price: 8000, oldPrice: 13000, category: "chargeur", verified: true, image: "charger", orders: 567, specs: "Tension: 12 V & Intensité: 4.3 A", details: categoryDetails.chargeur },
+            { id: 152, name: "Hp Chargeur", price: 8000, oldPrice: 13000, category: "chargeur", verified: true, image: "charger", orders: 489, specs: "Tension: 12 V & Intensité: 4.3 A", details: categoryDetails.chargeur },
+            { id: 153, name: "Acer Chargeur", price: 8000, oldPrice: 13000, category: "chargeur", verified: true, image: "charger", orders: 456, specs: "Tension: 12 V & Intensité: 3.4 A", details: categoryDetails.chargeur },
+            { id: 154, name: "Lenovo Chargeur", price: 8000, oldPrice: 13000, category: "chargeur", verified: true, image: "charger", orders: 534, specs: "Tension: 12 V & Intensité: 3.4 A", details: categoryDetails.chargeur },
+            { id: 155, name: "Dell Chargeur", price: 8000, oldPrice: 13000, category: "chargeur", verified: true, image: "charger", orders: 489, specs: "Tension: 12 V & Intensité: 4.2 A", details: categoryDetails.chargeur },
+            { id: 156, name: "Lenovo Chargeur", price: 8000, oldPrice: 13000, category: "chargeur", verified: true, image: "charger", orders: 423, specs: "Tension: 12 V & Intensité: 4.2 A", details: categoryDetails.chargeur },
+            
+            // SACS (9 produits)
+            { id: 157, name: "Lenovo Sac", price: 10000, oldPrice: 15000, category: "sac", verified: true, image: "bag", orders: 456, specs: "Taille: 14'' pouces", details: categoryDetails.sac },
+            { id: 158, name: "Enzo Sac", price: 12000, oldPrice: 17000, category: "sac", verified: true, image: "bag", orders: 378, specs: "Taille: 15.6 pouces", details: categoryDetails.sac },
+            { id: 159, name: "Toshiba Sac", price: 12000, oldPrice: 17000, category: "sac", verified: true, image: "bag", orders: 345, specs: "Taille: 15.6 pouces", details: categoryDetails.sac },
+            { id: 160, name: "Dell Sac", price: 12000, oldPrice: 17000, category: "sac", verified: true, image: "bag", orders: 267, specs: "Taille: 15.6 pouces", details: categoryDetails.sac },
+            { id: 161, name: "Hp Sac", price: 10000, oldPrice: 15000, category: "sac", verified: true, image: "bag", orders: 312, specs: "Taille: 15.6 pouces", details: categoryDetails.sac },
+            { id: 162, name: "Lenovo Sac", price: 10000, oldPrice: 15000, category: "sac", verified: true, image: "bag", orders: 345, specs: "Taille: 15 pouces", details: categoryDetails.sac },
+            { id: 163, name: "Hp Sac", price: 10000, oldPrice: 15000, category: "sac", verified: true, image: "bag", orders: 378, specs: "Taille: 15 pouces", details: categoryDetails.sac },
+            { id: 164, name: "Toshiba Sac", price: 10000, oldPrice: 15000, category: "sac", verified: true, image: "bag", orders: 267, specs: "Taille: 15 pouces", details: categoryDetails.sac },
+            { id: 165, name: "Lenovo Sac", price: 10000, oldPrice: 15000, category: "sac", verified: true, image: "bag", orders: 312, specs: "Taille: 15.6 pouces", details: categoryDetails.sac }
+        ];
+
+        // Variables globales
+        let cart = [];
+        let filteredProducts = [...products];
+        let currentCategory = "all";
+        let priceFilterActive = false;
+        let currentPage = 1;
+        let itemsPerPage = 20;
+        let totalPages = 1;
+        let userCart = {};
+        let userCartItems = {};
+
+        // Formatage des prix
+        function formatPrice(price) {
+            return new Intl.NumberFormat('fr-FR').format(price) + " FCFA";
+        }
+
+        // Calcul du pourcentage de réduction
+        function calculateDiscount(price, oldPrice) {
+            if (!oldPrice || oldPrice <= price) return 0;
+            return Math.round(((oldPrice - price) / oldPrice) * 100);
+        }
+
+        // Animation d'ajout au panier
+        function animateAddToCart(startElement, product) {
+            const startRect = startElement.getBoundingClientRect();
+            const cartIcon = document.getElementById('footerCart');
+            const endRect = cartIcon.getBoundingClientRect();
+            
+            const startX = startRect.left + startRect.width / 2;
+            const startY = startRect.top + startRect.height / 2;
+            const endX = endRect.left + endRect.width / 2 - startX;
+            const endY = endRect.top + endRect.height / 2 - startY;
+            
+            const animationContainer = document.getElementById('cartAnimationContainer');
+            const animationItem = document.createElement('div');
+            animationItem.className = 'cart-animation-item';
+            animationItem.innerHTML = '<i class="fas fa-shopping-cart"></i>';
+            animationItem.style.setProperty('--endX', `${endX}px`);
+            animationItem.style.setProperty('--endY', `${endY}px`);
+            animationItem.style.left = `${startX}px`;
+            animationItem.style.top = `${startY}px`;
+            
+            animationContainer.appendChild(animationItem);
+            
+            // Supprimer l'élément après l'animation
+            setTimeout(() => {
+                animationItem.remove();
+            }, 1000);
+        }
+
+        // Récupérer la quantité dans le panier pour un produit
+        function getCartQuantity(productId) {
+            if (userCartItems && userCartItems[productId]) {
+                return userCartItems[productId].quantity;
+            }
+            return 0;
+        }
+
+        // Rendu des produits
+        function renderProducts() {
+            const container = $('#productsContainer');
+            container.empty();
+            
+            // Calculer les produits à afficher pour la page actuelle
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const productsToShow = filteredProducts.slice(startIndex, endIndex);
+            
+            if (productsToShow.length === 0) {
+                container.html(`
+                    <div class="col-12 text-center py-5">
+                        <i class="fas fa-search fa-3x mb-3 text-muted"></i>
+                        <h5 class="text-muted">Aucun produit trouvé</h5>
+                        <p class="text-muted">Essayez de modifier vos filtres de recherche</p>
+                    </div>
+                `);
+                return;
+            }
+            
+            productsToShow.forEach((p, index) => {
+                const cartQuantity = getCartQuantity(p.id);
+                const discount = calculateDiscount(p.price, p.oldPrice);
+                const hasDetails = p.details && p.details.length > 0;
+                const imageUrl = getProductImageUrl(p, index);
+                
+                const productCard = `
+                    <div class="product-card" data-category="${p.category}" data-price="${p.price}">
+                        ${p.verified ? `<div class="product-badge"><i class="fas fa-check"></i> DISPONIBLE</div>` : ''}
+                        ${discount > 0 ? `<div class="discount-badge">-${discount}%</div>` : ''}
+                        ${cartQuantity > 0 ? `<div class="cart-quantity-badge">${cartQuantity}</div>` : ''}
+                        <div class="product-image">
+                            <img src="${imageUrl}" alt="${p.name}" class="product-img">
+                        </div>
+                        <div class="product-info">
+                            <div class="product-title">${p.name}</div>
+                            <div class="product-price-container">
+                                <div class="product-price">${formatPrice(p.price)}</div>
+                                ${p.oldPrice ? `<div class="product-old-price">${formatPrice(p.oldPrice)}</div>` : ''}
+                            </div>
+                            <div class="product-specs">${p.specs || ''}</div>
+                            <div class="product-orders">
+                                <i class="fas fa-shopping-cart"></i> ${p.orders} commandes
+                            </div>
+                            
+                            ${hasDetails ? `
+                                <button class="details-toggle" data-id="${p.id}">
+                                    <i class="fas fa-chevron-down"></i> Voir plus de détails
+                                </button>
+                                <div class="product-details" id="details-${p.id}">
+                                    <ul class="details-list">
+                                        ${p.details.map(detail => `
+                                            <li>
+                                                <span>${detail.label}</span>
+                                                <span>${detail.value}</span>
+                                            </li>
+                                        `).join('')}
+                                    </ul>
+                                </div>
+                            ` : ''}
+                            
+                            <div class="product-actions">
+                                <a href="contact.html?product=${p.id}" class="btn-contact">
+                                    <i class="fas fa-comment-dots"></i> Contacter
+                                </a>
+                                <button class="btn-cart" data-id="${p.id}">
+                                    <i class="fas fa-cart-plus"></i> Panier
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.append(productCard);
+            });
+            
+            // Mettre à jour le compteur de produits
+            const totalProducts = filteredProducts.length;
+            const showingStart = totalProducts > 0 ? startIndex + 1 : 0;
+            const showingEnd = Math.min(endIndex, totalProducts);
+            $('#productsCount').text(`${showingStart}-${showingEnd} sur ${totalProducts} produits`);
+            
+            // Mettre à jour la pagination
+            updatePagination();
+            
+            // Initialiser les boutons de détails
+            initializeDetailsButtons();
+        }
+
+        // Initialiser les boutons de détails
+        function initializeDetailsButtons() {
+            $('.details-toggle').off('click').on('click', function() {
+                const productId = $(this).data('id');
+                const detailsSection = $(`#details-${productId}`);
+                const toggleButton = $(this);
+                
+                if (detailsSection.hasClass('expanded')) {
+                    detailsSection.removeClass('expanded');
+                    toggleButton.removeClass('expanded');
+                    toggleButton.html('<i class="fas fa-chevron-down"></i> Voir plus de détails');
+                } else {
+                    detailsSection.addClass('expanded');
+                    toggleButton.addClass('expanded');
+                    toggleButton.html('<i class="fas fa-chevron-up"></i> Voir moins');
+                }
+            });
+        }
+
+        // Mise à jour de la pagination
+        function updatePagination() {
+            const totalProducts = filteredProducts.length;
+            totalPages = Math.ceil(totalProducts / itemsPerPage);
+            
+            const pagination = $('#pagination');
+            pagination.empty();
+            
+            if (totalPages <= 1) return;
+            
+            // Bouton précédent
+            const prevDisabled = currentPage === 1 ? 'disabled' : '';
+            pagination.append(`
+                <li class="page-item ${prevDisabled}">
+                    <a class="page-link" href="#" data-page="${currentPage - 1}">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                </li>
+            `);
+            
+            // Pages numérotées
+            const maxPagesToShow = 5;
+            let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+            let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+            
+            // Ajuster si on est proche de la fin
+            if (endPage - startPage + 1 < maxPagesToShow) {
+                startPage = Math.max(1, endPage - maxPagesToShow + 1);
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                const activeClass = i === currentPage ? 'active' : '';
+                pagination.append(`
+                    <li class="page-item ${activeClass}">
+                        <a class="page-link" href="#" data-page="${i}">${i}</a>
+                    </li>
+                `);
+            }
+            
+            // Bouton suivant
+            const nextDisabled = currentPage === totalPages ? 'disabled' : '';
+            pagination.append(`
+                <li class="page-item ${nextDisabled}">
+                    <a class="page-link" href="#" data-page="${currentPage + 1}">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+            `);
+        }
+
+        // Filtrage des produits
+        function filterProducts() {
+            const priceMax = parseInt($('#priceSlider').val());
+            const sortBy = $('#sortProducts').val();
+            
+            $('#currentPrice').text(formatPrice(priceMax));
+            
+            filteredProducts = products.filter(p => {
+                // Filtre par catégorie
+                if (currentCategory !== "all" && p.category !== currentCategory) return false;
+                
+                // Filtre par prix maximum si activé
+                if (priceFilterActive && p.price > priceMax) return false;
+                
+                return true;
+            });
+            
+            // Tri
+            switch(sortBy) {
+                case 'price_asc':
+                    filteredProducts.sort((a, b) => a.price - b.price);
+                    break;
+                case 'price_desc':
+                    filteredProducts.sort((a, b) => b.price - a.price);
+                    break;
+                case 'newest':
+                    filteredProducts.sort((a, b) => b.id - a.id);
+                    break;
+                case 'popular':
+                    filteredProducts.sort((a, b) => b.orders - a.orders);
+                    break;
+            }
+            
+            // Réinitialiser à la première page
+            currentPage = 1;
+            
+            renderProducts();
+        }
+
+        // Initialiser Firebase (MÊME MÉTHODE QUE L'INSCRIPTION)
+        function initializeFirebase() {
+            try {
+                console.log("Initialisation de Firebase...");
+                
+                // Vérifier si Firebase est chargé
+                if (typeof firebase === 'undefined') {
+                    console.error("Firebase SDK n'est pas chargé");
+                    setTimeout(() => {
+                        if (typeof firebase === 'undefined') {
+                            console.log("Firebase toujours non chargé après attente");
+                            // Rediriger vers la page de connexion si Firebase ne se charge pas
+                            window.location.href = "login.html";
+                        } else {
+                            initializeFirebase();
+                        }
+                    }, 1000);
+                    return;
+                }
+                
+                console.log("Firebase initialisé avec succès");
+                
+                // Vérifier l'état d'authentification
+                auth.onAuthStateChanged(async (user) => {
+                    if (user) {
+                        currentUser = user;
+                        console.log("Utilisateur connecté:", user.email, user.uid);
+                        
+                        // Charger le panier de l'utilisateur
+                        await loadUserCart();
+                        
+                        // Initialiser les produits
+                        filterProducts();
+                    } else {
+                        console.log("Utilisateur non connecté - Redirection vers login");
+                        // Rediriger vers la page de connexion
+                        window.location.href = "login.html";
+                    }
+                });
+                
+            } catch (error) {
+                console.error("Erreur Firebase:", error);
+                
+                // Afficher les produits même sans Firebase
+                filterProducts();
+                
+                // Rediriger vers login en cas d'erreur grave
+                window.location.href = "login.html";
+            }
+        }
+
+        // Charger le panier utilisateur depuis Firestore
+        async function loadUserCart() {
+            if (!currentUser) {
+                console.log("Pas d'utilisateur pour charger le panier");
+                userCartItems = {};
+                return;
+            }
+            
+            try {
+                const cartRef = db.collection("carts").doc(currentUser.uid);
+                const cartDoc = await cartRef.get();
+                
+                if (cartDoc.exists) {
+                    const cartData = cartDoc.data();
+                    userCart = cartData;
+                    userCartItems = cartData.items || {};
+                    
+                    console.log("Panier chargé:", cartData);
+                } else {
+                    // Créer un nouveau panier
+                    userCart = {
+                        userId: currentUser.uid,
+                        items: {},
+                        totalItems: 0,
+                        totalAmount: 0,
+                        createdAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString()
+                    };
+                    
+                    userCartItems = {};
+                    
+                    console.log("Panier vide initialisé");
+                }
+                
+                updateCartCount();
+            } catch (error) {
+                console.error("Erreur lors du chargement du panier:", error);
+                userCart = {
+                    userId: currentUser ? currentUser.uid : null,
+                    items: {},
+                    totalItems: 0,
+                    totalAmount: 0
+                };
+                userCartItems = {};
+                updateCartCount();
+            }
+        }
+
+        // Sauvegarder le panier dans Firestore
+        async function saveCartToFirestore() {
+            if (!currentUser) {
+                console.log("Pas d'utilisateur pour sauvegarder le panier");
+                return;
+            }
+            
+            try {
+                const cartRef = db.collection("carts").doc(currentUser.uid);
+                
+                // Calculer le total
+                let totalItems = 0;
+                let totalAmount = 0;
+                
+                for (const productId in userCartItems) {
+                    const item = userCartItems[productId];
+                    totalItems += item.quantity;
+                    totalAmount += item.price * item.quantity;
+                }
+                
+                const cartData = {
+                    userId: currentUser.uid,
+                    items: userCartItems,
+                    totalItems: totalItems,
+                    totalAmount: totalAmount,
+                    updatedAt: new Date().toISOString()
+                };
+                
+                if (!userCart.createdAt) {
+                    cartData.createdAt = new Date().toISOString();
+                }
+                
+                await cartRef.set(cartData, { merge: true });
+                console.log("Panier sauvegardé dans Firestore");
+                
+                userCart = cartData;
+                
+            } catch (error) {
+                console.error("Erreur lors de la sauvegarde du panier:", error);
+            }
+        }
+
+        // Ajout au panier avec Firebase
+        async function addToCart(productId, buttonElement) {
+            if (!currentUser) {
+                alert("Veuillez vous connecter pour ajouter des articles au panier");
+                window.location.href = "login.html";
+                return;
+            }
+            
+            // Animation du bouton
+            const $button = $(buttonElement);
+            $button.addClass('adding');
+            setTimeout(() => {
+                $button.removeClass('adding');
+            }, 500);
+            
+            const product = products.find(p => p.id === productId);
+            
+            if (!product) {
+                console.error("Produit non trouvé:", productId);
+                return;
+            }
+            
+            // Animation vers le panier
+            animateAddToCart(buttonElement, product);
+            
+            // Mettre à jour le panier local
+            if (!userCartItems) {
+                userCartItems = {};
+            }
+            
+            if (userCartItems[productId]) {
+                userCartItems[productId].quantity += 1;
+            } else {
+                userCartItems[productId] = {
+                    productId: productId,
+                    name: product.name,
+                    price: product.price,
+                    image: getProductImageUrl(product, productId - 1),
+                    quantity: 1,
+                    category: product.category,
+                    addedAt: new Date().toISOString()
+                };
+            }
+            
+            // Sauvegarder dans Firestore
+            await saveCartToFirestore();
+            
+            // Mettre à jour l'affichage
+            updateCartCount();
+            
+            // Mettre à jour la quantité sur le produit
+            renderProducts();
+            
+            // Notification
+            $('#cartProductName').text(product.name);
+            const alert = $('#cartAlert');
+            alert.removeClass('fade').addClass('show');
+            
+            setTimeout(() => {
+                alert.removeClass('show').addClass('fade');
+            }, 3000);
+        }
+
+        // Mise à jour du compteur panier
+        function updateCartCount() {
+            const totalItems = userCart.totalItems || Object.keys(userCartItems || {}).reduce((total, key) => {
+                return total + (userCartItems[key].quantity || 0);
+            }, 0);
+            $('#footerCartCount').text(totalItems);
+        }
+
+        // Initialisation
+        $(document).ready(async function() {
+            console.log("Dashboard prêt à initialiser Firebase");
+            
+            // Initialiser Firebase
+            setTimeout(() => {
+                initializeFirebase();
+            }, 100);
+            
+            // Initialiser le filtre de prix désactivé
+            $('#priceToggle').prop('checked', false);
+            $('#toggleLabel').text('Désactivé');
+            $('#priceSliderContainer').removeClass('active');
+            
+            // Initialiser les produits même si Firebase n'est pas encore chargé
+            filterProducts();
+            
+            // Gestion du toggle du filtre de prix
+            $('#priceToggle').on('change', function() {
+                priceFilterActive = $(this).is(':checked');
+                $('#toggleLabel').text(priceFilterActive ? 'Activé' : 'Désactivé');
+                $('#priceSliderContainer').toggleClass('active', priceFilterActive);
+                filterProducts();
+            });
+            
+            // Gestion du slider de prix
+            $('#priceSlider').on('input', function() {
+                $('#currentPrice').text(formatPrice($(this).val()));
+                if (priceFilterActive) {
+                    filterProducts();
+                }
+            });
+            
+            // Recherche
+            $('.search-btn').on('click', performSearch);
+            
+            $('.search-input').on('keyup', function(e) {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+            
+            function performSearch() {
+                const term = $('.search-input').val().toLowerCase().trim();
+                
+                if (term) {
+                    filteredProducts = products.filter(p => 
+                        p.name.toLowerCase().includes(term) ||
+                        p.category.toLowerCase().includes(term) ||
+                        (p.specs && p.specs.toLowerCase().includes(term))
+                    );
+                    
+                    currentPage = 1;
+                    renderProducts();
+                } else {
+                    filteredProducts = [...products];
+                    filterProducts();
+                }
+            }
+            
+            // Gestion des catégories (barre horizontale)
+            $('.category-item').on('click', function(e) {
+                e.preventDefault();
+                
+                // Mettre à jour l'état actif
+                $('.category-item').removeClass('active');
+                $(this).addClass('active');
+                
+                // Mettre à jour la catégorie courante
+                currentCategory = $(this).data('category') || "all";
+                
+                // Appliquer les filtres
+                filterProducts();
+            });
+            
+            // Gestion des catégories (sidebar)
+            $('.category-link').on('click', function(e) {
+                e.preventDefault();
+                
+                const category = $(this).data('category');
+                if (category) {
+                    currentCategory = category;
+                    
+                    // Mettre à jour l'état actif dans la barre horizontale
+                    $('.category-item').removeClass('active');
+                    $(`.category-item[data-category="${category}"]`).addClass('active');
+                    if (category === "all") {
+                        $('.category-item:first').addClass('active');
+                    }
+                    
+                    filterProducts();
+                }
+            });
+            
+            // Ajout au panier
+            $(document).on('click', '.btn-cart', function(e) {
+                e.preventDefault();
+                const productId = parseInt($(this).data('id'));
+                addToCart(productId, this);
+            });
+            
+            // Tri des produits
+            $('#sortProducts').on('change', filterProducts);
+            
+            // Navigation par pagination
+            $(document).on('click', '.page-link', function(e) {
+                e.preventDefault();
+                const page = $(this).data('page');
+                if (page && page !== currentPage) {
+                    currentPage = page;
+                    renderProducts();
+                    
+                    // Faire défiler vers le haut
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            });
+            
+            // Changer le nombre d'articles par page
+            $('#itemsPerPage').on('change', function() {
+                itemsPerPage = parseInt($(this).val());
+                currentPage = 1;
+                filterProducts();
+            });
+            
+            // Navigation footer
+            $('.footer-item').on('click', function(e) {
+                $('.footer-item').removeClass('active');
+                $(this).addClass('active');
+            });
+        });
+    </script>
+</body>
+</html>
