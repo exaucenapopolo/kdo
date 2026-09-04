@@ -3,8 +3,7 @@ module.exports = function (api) {
   return {
     presets: ['babel-preset-expo'],
     plugins: [
-      // Si vous utilisez react-native-reanimated, il doit TOUJOURS être le dernier plugin :
-      'react-native-reanimated/plugin',
+      ['@babel/plugin-transform-typescript', { allowDeclareFields: true }],
     ],
   };
 };
