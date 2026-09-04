@@ -6,29 +6,33 @@ const monorepoRoot = path.resolve(projectRoot, "../..");
 
 const config = getDefaultConfig(projectRoot);
 
-// Monorepo: watch entire workspace
 config.watchFolders = [monorepoRoot];
 
-// Resolve from both local and root node_modules
 config.resolver.nodeModulesPaths = [
   path.resolve(projectRoot, "node_modules"),
   path.resolve(monorepoRoot, "node_modules"),
 ];
 
-// pnpm stores packages at:
-//   node_modules/.pnpm/<PKG>@<VERSION>_hash/node_modules/<PKG>/file.js
-// On utilise expo.* et @expo.* pour inclure expo-file-system et tous les autres modules Expo.
+// Liste des paquets à transpiler obligatoirement
 const PACKAGES_TO_TRANSFORM = [
   "react-native",
   "@react-native",
-  "expo.*",
-  "@expo.*",
+  "expo",
+  "@expo",
+  "expo-file-system",
+  "expo-router",
+  "expo-updates",
+  "expo-modules-core",
+  "expo-constants",
+  "expo-font",
+  "expo-web-browser",
   "@react-navigation",
   "@unimodules",
 ].join("|");
 
+// Expression régulière compatible Windows (\\) et Unix (/) pour PNPM
 config.resolver.transformIgnorePatterns = [
-  `node_modules/(?!(.pnpm/[^/]+/node_modules/)?(${PACKAGES_TO_TRANSFORM})/)`,
+  /node_modules[\/\\](?!(.pnpm[\/\\][^\/\\]+[\/\\]node_modules[\/\\])?(@expo|expo|react-native|@react-native|@react-navigation|@unimodules)[\/\\])/,
 ];
 
 module.exports = config;
