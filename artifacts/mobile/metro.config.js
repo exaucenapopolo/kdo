@@ -17,22 +17,12 @@ config.resolver.nodeModulesPaths = [
 
 // pnpm stores packages at:
 //   node_modules/.pnpm/<PKG>@<VERSION>_hash/node_modules/<PKG>/file.js
-// The optional (.pnpm/[^/]+/node_modules/)? prefix handles this double-nesting
-// so that react-native, expo, etc. are always Babel-transformed.
-// This is required because hermesc (Linux LLVM 8.0.0) bundled with react-native 0.81
-// does NOT support ES2022 private class fields (#x, #y, #width, #height) used in
-// react-native/src/private/webapis/geometry/DOMRectReadOnly.js and DOMRect.js.
+// On utilise expo.* et @expo.* pour inclure expo-file-system et tous les autres modules Expo.
 const PACKAGES_TO_TRANSFORM = [
   "react-native",
   "@react-native",
-  "expo",
-  "@expo",
-  "expo-router",
-  "expo-updates",
-  "expo-modules-core",
-  "expo-constants",
-  "expo-font",
-  "expo-web-browser",
+  "expo.*",
+  "@expo.*",
   "@react-navigation",
   "@unimodules",
 ].join("|");
