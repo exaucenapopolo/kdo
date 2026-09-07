@@ -1,7 +1,5 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json"
-
-  "buildCommand": "pnpm run build",
-  "outputDirectory": "artifacts/mockup-sandbox/dist",
-  "framework": "vite"
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "pnpm --filter @workspace/api-server run build",
+  "outputDirectory": "dist"
 }
