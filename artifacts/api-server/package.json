@@ -7,7 +7,8 @@
                     "dev":  "export NODE_ENV=development \u0026\u0026 pnpm run build:local \u0026\u0026 pnpm run start",
                     "start":  "node --enable-source-maps ./dist/index.mjs",
                     "typecheck":  "tsc -p tsconfig.json --noEmit",
-                    "build:local":  "node ./build.mjs"
+                    "build:local":  "node ./build.mjs",
+                    "build":  "node -e \"console.log(\u0027Vercel Express runtime: build step completed\u0027)\""
                 },
     "dependencies":  {
                          "@types/nodemailer":  "^8.0.0",
