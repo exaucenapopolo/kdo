@@ -1,5 +1,4 @@
 import { createRequire } from "node:module";
-import type { IncomingMessage, ServerResponse } from "node:http";
 import express, { type Express, type RequestHandler } from "express";
 import cors from "cors";
 import router from "./routes";
@@ -7,11 +6,21 @@ import { logger } from "./lib/logger";
 
 const require = createRequire(import.meta.url);
 
+type PinoRequest = {
+  id: string;
+  method?: string;
+  url?: string;
+};
+
+type PinoResponse = {
+  statusCode?: number;
+};
+
 type PinoHttpOptions = {
   logger?: typeof logger;
   serializers?: {
-    req?: (req: IncomingMessage) => object;
-    res?: (res: ServerResponse) => object;
+    req?: (req: PinoRequest) => object;
+    res?: (res: PinoResponse) => object;
   };
 };
 
