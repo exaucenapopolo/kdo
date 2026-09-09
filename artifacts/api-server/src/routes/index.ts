@@ -1,10 +1,10 @@
 import { Router, type IRouter } from "express";
-import healthRouter from "./health";
-import authRouter from "./auth";
-import paymentRouter from "./payment";
-import twilioSandboxRouter from "./twilio-sandbox";
-import adminRouter from "./admin";
-import usersRouter from "./users";
+import healthRouter from "./health.js";
+import authRouter from "./auth.js";
+import paymentRouter from "./payment.js";
+import twilioSandboxRouter from "./twilio-sandbox.js";
+import adminRouter from "./admin.js";
+import usersRouter from "./users.js";
 
 const router: IRouter = Router();
 

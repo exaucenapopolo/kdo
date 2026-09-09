@@ -1,8 +1,8 @@
 import { createRequire } from "node:module";
 import express, { type Express, type RequestHandler } from "express";
 import cors from "cors";
-import router from "./routes";
-import { logger } from "./lib/logger";
+import router from "./routes/index.js";
+import { logger } from "./lib/logger.js";
 
 const require = createRequire(import.meta.url);
 

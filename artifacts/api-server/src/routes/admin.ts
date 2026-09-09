@@ -9,7 +9,7 @@ import {
   kdoUsersTable,
   kdoAdminsTable,
 } from "@workspace/db";
-import { sendEmail, buildAdminOrderEmail, ADMIN_EMAILS } from "../email";
+import { sendEmail, buildAdminOrderEmail, ADMIN_EMAILS } from "../email.js";
 
 const router = Router();
 

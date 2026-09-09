@@ -2,7 +2,7 @@ import { Router } from "express";
 import { randomUUID } from "node:crypto";
 import { eq, sql } from "drizzle-orm";
 import { db, kdoUsersTable, kdoOrdersTable, kdoAddressesTable, kdoCountersTable, kdoProductStatsTable } from "@workspace/db";
-import { buildWelcomeEmail, sendEmail } from "../email";
+import { buildWelcomeEmail, sendEmail } from "../email.js";
 
 const router = Router();
 

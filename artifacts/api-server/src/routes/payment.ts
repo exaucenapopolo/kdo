@@ -6,7 +6,7 @@ import {
   buildAdminOrderEmail,
   buildUserOrderEmail,
   sendEmail,
-} from "../email";
+} from "../email.js";
 
 const router = Router();
 
