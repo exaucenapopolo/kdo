@@ -32,7 +32,7 @@ import { formatPrice } from "@/data/products";
 const BIG_CITIES = ["Yaoundé", "Douala", "Bafoussam"];
 const SMALL_FEE  = 1000;
 const TAB_H      = Platform.OS === "web" ? 84 : 60;
-const DOMAIN     = process.env["EXPO_PUBLIC_DOMAIN"] || "kdo-cameroon-app.replit.app";
+const DOMAIN     = process.env["EXPO_PUBLIC_DOMAIN"] || "https://kdo-api-server.vercel.app/api"";
 const API_NOTIFY = `https://${DOMAIN}/api/payment/confirm`;
 
 const PROMO_CODES: Record<string, { gift: string }> = {
