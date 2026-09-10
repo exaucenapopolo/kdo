@@ -1,6 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
 
-const DOMAIN = process.env["EXPO_PUBLIC_DOMAIN"] || "kdo-cameroon-app.replit.app";
+const DOMAIN = process.env["EXPO_PUBLIC_DOMAIN"] || "https://kdo-api-server.vercel.app/api";
 const API_BASE = `https://${DOMAIN}/api`;
 
 export interface UnavailableEntry {
