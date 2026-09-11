@@ -47,13 +47,23 @@ function wrap(inner: string, forUser = false) {
 
 // ─── Template : Email admin — nouvelle commande ───────────────────────────────
 export function buildAdminOrderEmail(order: any): string {
-  const items = (order.items || []) as Array<{ name: string; quantity: number; price: number }>;
-  const delivMode = order.delivery?.deliveryMode === "boutique"
-    ? "Retrait en boutique"
-    : order.delivery?.deliveryMode === "expedition"
-    ? "Expédition" : "Livraison à domicile";
+  const items = (order.items || []) as Array<{
+    name: string;
+    quantity: number;
+    price: number;
+  }>;
 
-  const itemsHtml = items.map(i => `
+  const mode = order.delivery?.deliveryMode || "livraison";
+  const isBoutique = mode === "boutique";
+  const isExpedition = mode === "expedition";
+
+  const receptionLabel = isBoutique
+    ? "Retrait en boutique"
+    : isExpedition
+      ? "Expédition"
+      : "Livraison à domicile";
+
+  const itemsHtml = items.map((i) => `
     <tr>
       <td style="padding:8px 12px;border-bottom:1px solid #F0F0F0;font-size:14px;color:#333;">${i.name}</td>
       <td style="padding:8px 12px;border-bottom:1px solid #F0F0F0;text-align:center;font-size:14px;color:#555;">×${i.quantity}</td>
@@ -62,14 +72,16 @@ export function buildAdminOrderEmail(order: any): string {
       </td>
     </tr>`).join("");
 
+  const receptionAmount = isBoutique
+    ? 0
+    : Number(order.deliveryPrice || 0);
+
   return wrap(`
-  <!-- Header -->
   <tr><td style="background:linear-gradient(135deg,#FF6B00,#FF8C00);padding:28px 32px;text-align:center;">
     <h1 style="margin:0;color:#fff;font-size:22px;font-weight:800;letter-spacing:1px;">🛒 NOUVELLE COMMANDE KDO</h1>
     <p style="margin:6px 0 0;color:rgba(255,255,255,0.9);font-size:15px;">Référence : <strong>${order.ref || "-"}</strong></p>
   </td></tr>
 
-  <!-- Client -->
   <tr><td style="padding:24px 32px 0;">
     <h2 style="margin:0 0 12px;font-size:13px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:1px;">👤 Client</h2>
     <table width="100%" cellpadding="0" cellspacing="0">
@@ -79,18 +91,16 @@ export function buildAdminOrderEmail(order: any): string {
     </table>
   </td></tr>
 
-  <!-- Livraison -->
   <tr><td style="padding:20px 32px 0;">
-    <h2 style="margin:0 0 12px;font-size:13px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:1px;">📍 Livraison</h2>
+    <h2 style="margin:0 0 12px;font-size:13px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:1px;">📍 ${receptionLabel}</h2>
     <table width="100%" cellpadding="0" cellspacing="0">
       <tr><td style="padding:5px 0;font-size:14px;color:#333;"><strong>Ville :</strong> ${order.delivery?.city || "-"}</td></tr>
-      <tr><td style="padding:5px 0;font-size:14px;color:#333;"><strong>Mode :</strong> ${delivMode}</td></tr>
-      <tr><td style="padding:5px 0;font-size:14px;color:#333;"><strong>Adresse :</strong> ${order.delivery?.address || "-"}</td></tr>
+      <tr><td style="padding:5px 0;font-size:14px;color:#333;"><strong>Mode :</strong> ${receptionLabel}</td></tr>
+      ${!isBoutique ? `<tr><td style="padding:5px 0;font-size:14px;color:#333;"><strong>Adresse :</strong> ${order.delivery?.address || "-"}</td></tr>` : ""}
       ${order.delivery?.instructions ? `<tr><td style="padding:5px 0;font-size:14px;color:#333;"><strong>Consignes :</strong> ${order.delivery.instructions}</td></tr>` : ""}
     </table>
   </td></tr>
 
-  <!-- Articles -->
   <tr><td style="padding:20px 32px 0;">
     <h2 style="margin:0 0 12px;font-size:13px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:1px;">🛍️ Articles (${items.length})</h2>
     <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #F0F0F0;border-radius:8px;overflow:hidden;">
@@ -103,36 +113,68 @@ export function buildAdminOrderEmail(order: any): string {
     </table>
   </td></tr>
 
-  <!-- Récap financier -->
   <tr><td style="padding:20px 32px 0;">
     <h2 style="margin:0 0 12px;font-size:13px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:1px;">💰 Récapitulatif</h2>
     <table width="100%" cellpadding="0" cellspacing="0">
       <tr><td style="padding:4px 0;font-size:14px;color:#555;">Sous-total</td>
           <td style="padding:4px 0;font-size:14px;color:#333;text-align:right;">${Number(order.subtotal || 0).toLocaleString("fr-FR")} FCFA</td></tr>
-      ${order.promoCode ? `<tr><td style="padding:4px 0;font-size:14px;color:#555;">Code promo</td><td style="padding:4px 0;font-size:14px;color:#FF6B00;text-align:right;">${order.promoCode} 🎁</td></tr>` : ""}
-      <tr><td style="padding:4px 0;font-size:14px;color:#555;">Livraison</td>
-          <td style="padding:4px 0;font-size:14px;color:#333;text-align:right;">+${Number(order.deliveryPrice || 0).toLocaleString("fr-FR")} FCFA</td></tr>
+      ${order.promoCode ? `<tr><td style="padding:4px 0;font-size:14px;color:#555;">Code promo</td><td style="padding:4px 0;font-size:14px;color:#FF6B00;text-align:right;">${order.promoCode}</td></tr>` : ""}
+      <tr><td style="padding:4px 0;font-size:14px;color:#555;">${isBoutique ? "Retrait en boutique" : isExpedition ? "Expédition" : "Livraison"}</td>
+          <td style="padding:4px 0;font-size:14px;color:#333;text-align:right;">+${receptionAmount.toLocaleString("fr-FR")} FCFA</td></tr>
       <tr><td colspan="2" style="padding:8px 0;border-top:2px solid #FF6B00;"></td></tr>
       <tr><td style="padding:4px 0;font-size:18px;font-weight:800;color:#1A1A1A;">TOTAL</td>
           <td style="padding:4px 0;font-size:18px;font-weight:800;color:#FF6B00;text-align:right;">${Number(order.grandTotal || 0).toLocaleString("fr-FR")} FCFA</td></tr>
     </table>
   </td></tr>
 
-  <!-- Paiement -->
   <tr><td style="padding:20px 32px 28px;">
     <div style="background:#FFF8F0;border-left:4px solid #FF6B00;border-radius:6px;padding:14px 18px;">
-      <p style="margin:0;font-size:14px;color:#333;"><strong>💳 Paiement :</strong> ${order.paymentMethod || "-"}</p>
+      <p style="margin:0;font-size:14px;color:#333;"><strong>💳 Paiement :</strong> ${order.paymentMethod || (isBoutique ? "Paiement en boutique" : "À confirmer")}</p>
       <p style="margin:6px 0 0;font-size:13px;color:#888;">Date : ${order.date || new Date().toLocaleString("fr-FR")}</p>
     </div>
   </td></tr>`);
 }
 
-// ─── Template : Email utilisateur — confirmation de commande ──────────────────
 export function buildUserOrderEmail(order: any): string {
-  const items = (order.items || []) as Array<{ name: string; quantity: number; price: number }>;
-  const phone  = order.whatsappPhone || order.callPhone || order.delivery?.phone || "-";
+  const items = (order.items || []) as Array<{
+    name: string;
+    quantity: number;
+    price: number;
+  }>;
 
-  const itemsHtml = items.map(i => `
+  const phone =
+    order.whatsappPhone ||
+    order.callPhone ||
+    order.delivery?.phone ||
+    "-";
+
+  const mode = order.delivery?.deliveryMode || "livraison";
+  const isBoutique = mode === "boutique";
+  const isExpedition = mode === "expedition";
+
+  const city = order.delivery?.city || "-";
+
+  const contactMessage = isBoutique
+    ? `Notre équipe va vous contacter très bientôt pour confirmer la date et l'heure de votre retrait en boutique à <strong>${city}</strong>.`
+    : isExpedition
+      ? `Notre équipe va vous contacter très bientôt au numéro <strong style="color:#FF6B00;">${phone}</strong> pour organiser l'expédition de votre commande.`
+      : `Notre équipe va vous contacter très bientôt au numéro <strong style="color:#FF6B00;">${phone}</strong> pour organiser votre livraison à <strong>${city}</strong>.`;
+
+  const paymentLabel =
+    order.paymentMethod ||
+    (isBoutique
+      ? "Paiement en boutique"
+      : isExpedition
+        ? "À confirmer avec notre équipe"
+        : "Paiement à la livraison");
+
+  const paymentMessage = isBoutique
+    ? "Vous paierez directement en boutique au moment du retrait. Aucun frais de livraison ne sera facturé."
+    : isExpedition
+      ? "Notre équipe vous précisera les modalités de paiement lors de la confirmation de l'expédition."
+      : "Vous paierez au moment de la livraison. Pas de paiement en avance.";
+
+  const itemsHtml = items.map((i) => `
     <tr>
       <td style="padding:8px 12px;border-bottom:1px solid #F0F0F0;font-size:14px;color:#333;">${i.name}</td>
       <td style="padding:8px 12px;border-bottom:1px solid #F0F0F0;text-align:center;font-size:14px;color:#555;">×${i.quantity}</td>
@@ -141,35 +183,42 @@ export function buildUserOrderEmail(order: any): string {
       </td>
     </tr>`).join("");
 
+  const handlingLabel = isBoutique
+    ? "Retrait en boutique"
+    : isExpedition
+      ? "Expédition"
+      : "Livraison";
+
+  const handlingAmount = isBoutique
+    ? 0
+    : Number(order.deliveryPrice || 0);
+
   return wrap(`
-  <!-- Header -->
   <tr><td style="background:linear-gradient(135deg,#0066CC,#1A8FE3);padding:32px 32px 24px;text-align:center;">
     <h1 style="margin:0;color:#fff;font-size:24px;font-weight:800;">✅ Commande confirmée !</h1>
     <p style="margin:8px 0 0;color:rgba(255,255,255,0.9);font-size:15px;">Réf. <strong>${order.ref || "-"}</strong></p>
   </td></tr>
 
-  <!-- Message de confirmation -->
   <tr><td style="padding:28px 32px 0;">
     <p style="margin:0 0 10px;font-size:16px;color:#1A1A1A;font-weight:600;">
       Bonjour ${order.delivery?.fullName || "cher(e) client(e)"} 👋
     </p>
+
     <p style="margin:0 0 14px;font-size:15px;color:#444;line-height:1.6;">
-      Nous avons bien reçu votre commande et nous vous en remercions. 
-      Notre équipe va vous contacter très bientôt au numéro 
-      <strong style="color:#FF6B00;">${phone}</strong> pour organiser 
-      votre livraison à <strong>${order.delivery?.city || "-"}</strong>.
+      Nous avons bien reçu votre commande et nous vous en remercions.
+      ${contactMessage}
     </p>
+
     <div style="background:#F0F8FF;border-left:4px solid #0066CC;border-radius:6px;padding:14px 18px;margin-bottom:4px;">
       <p style="margin:0;font-size:14px;color:#0066CC;font-weight:600;">
-        💳 Mode de paiement : ${order.paymentMethod || "Paiement à la livraison"}
+        💳 Mode de paiement : ${paymentLabel}
       </p>
       <p style="margin:6px 0 0;font-size:13px;color:#555;">
-        Vous paierez au moment de la livraison. Pas de paiement en avance.
+        ${paymentMessage}
       </p>
     </div>
   </td></tr>
 
-  <!-- Récap commande -->
   <tr><td style="padding:20px 32px 0;">
     <h2 style="margin:0 0 12px;font-size:13px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:1px;">🛍️ Votre commande</h2>
     <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #F0F0F0;border-radius:8px;overflow:hidden;">
@@ -182,20 +231,18 @@ export function buildUserOrderEmail(order: any): string {
     </table>
   </td></tr>
 
-  <!-- Total -->
   <tr><td style="padding:16px 32px 0;">
     <table width="100%" cellpadding="0" cellspacing="0">
       <tr><td style="padding:4px 0;font-size:14px;color:#555;">Sous-total</td>
           <td style="padding:4px 0;font-size:14px;color:#333;text-align:right;">${Number(order.subtotal || 0).toLocaleString("fr-FR")} FCFA</td></tr>
-      <tr><td style="padding:4px 0;font-size:14px;color:#555;">Livraison</td>
-          <td style="padding:4px 0;font-size:14px;color:#333;text-align:right;">+${Number(order.deliveryPrice || 0).toLocaleString("fr-FR")} FCFA</td></tr>
+      <tr><td style="padding:4px 0;font-size:14px;color:#555;">${handlingLabel}</td>
+          <td style="padding:4px 0;font-size:14px;color:#333;text-align:right;">+${handlingAmount.toLocaleString("fr-FR")} FCFA</td></tr>
       <tr><td colspan="2" style="padding:6px 0;border-top:2px solid #0066CC;"></td></tr>
       <tr><td style="font-size:17px;font-weight:800;color:#1A1A1A;">Total à payer</td>
           <td style="font-size:17px;font-weight:800;color:#FF6B00;text-align:right;">${Number(order.grandTotal || 0).toLocaleString("fr-FR")} FCFA</td></tr>
     </table>
   </td></tr>
 
-  <!-- CTA site -->
   <tr><td style="padding:24px 32px 28px;text-align:center;">
     <p style="margin:0 0 16px;font-size:14px;color:#555;">
       Consultez notre catalogue complet et suivez vos commandes sur notre site.
@@ -208,7 +255,6 @@ export function buildUserOrderEmail(order: any): string {
   </td></tr>`, true);
 }
 
-// ─── Template : Email de bienvenue utilisateur ───────────────────────────────
 export function buildWelcomeEmail(name: string, phone: string): string {
   return wrap(`
   <!-- Header -->

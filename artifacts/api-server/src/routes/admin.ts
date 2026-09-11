@@ -1,7 +1,5 @@
 import { Router } from "express";
 import { randomUUID } from "node:crypto";
-import fs from "fs";
-import path from "path";
 import { eq, desc, sql } from "drizzle-orm";
 import {
   db,
@@ -13,12 +11,12 @@ import { sendEmail, buildAdminOrderEmail, ADMIN_EMAILS } from "../email.js";
 
 const router = Router();
 
-const UNAVAILABLE_FILE = path.join(process.cwd(), "unavailable.json");
 
-// ── Super admin (propriétaire, ne peut pas être retiré) ───────────────────────
+// â”€â”€ Super admin (propriÃ©taire, ne peut pas Ãªtre retirÃ©) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const SUPER_ADMIN_EMAIL = "exaucenapopolo2@gmail.com";
+const LEGACY_ADMIN = [SUPER_ADMIN_EMAIL, 'mcexauofficiel@gmail.com'];
 
-// ── Auth admin middleware ─────────────────────────────────────────────────────
+// â”€â”€ Auth admin middleware â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function requireAdmin(req: any, res: any, next: any) {
   // Accept x-admin-email header OR Authorization: Bearer <email>
   const headerEmail  = req.headers["x-admin-email"] as string | undefined;
@@ -30,7 +28,7 @@ async function requireAdmin(req: any, res: any, next: any) {
   try {
     const rows = await db.select().from(kdoAdminsTable)
       .where(eq(kdoAdminsTable.email, email)).limit(1);
-    if (rows.length === 0) return res.status(403).json({ error: "Accès réservé aux administrateurs KDO" });
+    if (rows.length === 0) return res.status(403).json({ error: "AccÃ¨s rÃ©servÃ© aux administrateurs KDO" });
     req.adminEmail = email;
     req.adminRole  = rows[0].role;
     req.adminPerms = rows[0].permissions as any;
@@ -41,16 +39,16 @@ async function requireAdmin(req: any, res: any, next: any) {
 }
 
 async function requireSuper(req: any, res: any, next: any) {
-  if (req.adminRole !== "super") return res.status(403).json({ error: "Réservé au super-administrateur" });
+  if (req.adminRole !== "super") return res.status(403).json({ error: "RÃ©servÃ© au super-administrateur" });
   next();
 }
 
-// ─── GET /admin/me ────────────────────────────────────────────────────────────
+// â”€â”€â”€ GET /admin/me â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 router.get("/admin/me", requireAdmin, async (req: any, res) => {
   return res.json({ email: req.adminEmail, role: req.adminRole });
 });
 
-// ─── GET /admin/stats ─────────────────────────────────────────────────────────
+// â”€â”€â”€ GET /admin/stats â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 router.get("/admin/stats", requireAdmin, async (_req, res) => {
   try {
     const [totalOrders, totalUsers, cityRows] = await Promise.all([
@@ -90,40 +88,58 @@ router.get("/admin/stats", requireAdmin, async (_req, res) => {
   }
 });
 
-// ─── GET /admin/orders ────────────────────────────────────────────────────────
+// â”€â”€â”€ GET /admin/orders â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 router.get("/admin/orders", requireAdmin, async (req, res) => {
   try {
-    const limit  = Math.min(parseInt((req.query as any).limit  ?? "50"),  200);
-    const offset = parseInt((req.query as any).offset ?? "0");
+    const limit = Math.min(
+      Math.max(parseInt((req.query as any).limit ?? "50", 10) || 50, 1),
+      200
+    );
+
+    const offset = Math.max(
+      parseInt((req.query as any).offset ?? "0", 10) || 0,
+      0
+    );
+
     const status = (req.query as any).status as string | undefined;
 
-    let query = db.select().from(kdoOrdersTable);
-    if (status) (query as any).where(eq(kdoOrdersTable.status, status));
+    const rows = status
+      ? await db
+          .select()
+          .from(kdoOrdersTable)
+          .where(eq(kdoOrdersTable.status, status))
+          .orderBy(desc(kdoOrdersTable.createdAt))
+          .limit(limit)
+          .offset(offset)
+      : await db
+          .select()
+          .from(kdoOrdersTable)
+          .orderBy(desc(kdoOrdersTable.createdAt))
+          .limit(limit)
+          .offset(offset);
 
-    const rows = await db.select().from(kdoOrdersTable)
-      .where(status ? eq(kdoOrdersTable.status, status) : undefined)
-      .orderBy(desc(kdoOrdersTable.createdAt))
-      .limit(limit)
-      .offset(offset);
-
-    const orders = rows.map(r => ({
-      id:            r.id,
-      ref:           r.ref,
-      userPhone:     r.userPhone,
-      grandTotal:    r.grandTotal,
-      city:          r.city,
-      status:        r.status,
+    const orders = rows.map((r) => ({
+      id: r.id,
+      ref: r.ref,
+      userPhone: r.userPhone,
+      grandTotal: r.grandTotal,
+      city: r.city,
+      status: r.status,
       statusMessage: r.statusMessage,
-      createdAt:     r.createdAt,
-      data:          r.data,
+      createdAt: r.createdAt,
+      data: r.data,
     }));
+
     return res.json({ orders });
   } catch (e: any) {
-    return res.status(500).json({ error: e.message });
+    console.error("[admin/orders] erreur:", e);
+    return res.status(500).json({
+      error: e?.message || "Erreur serveur lors du chargement des commandes",
+    });
   }
 });
 
-// ─── PUT /admin/orders/:ref/status ───────────────────────────────────────────
+// â”€â”€â”€ PUT /admin/orders/:ref/status â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 router.put("/admin/orders/:ref/status", requireAdmin, async (req: any, res) => {
   const { ref } = req.params;
   const { status, statusMessage } = req.body as {
@@ -132,7 +148,7 @@ router.put("/admin/orders/:ref/status", requireAdmin, async (req: any, res) => {
 
   const VALID = ["pending", "confirmed", "shipped", "delivered", "cancelled"];
   if (!status || !VALID.includes(status)) {
-    return res.status(400).json({ error: `status doit être: ${VALID.join(", ")}` });
+    return res.status(400).json({ error: `status doit Ãªtre: ${VALID.join(", ")}` });
   }
 
   try {
@@ -152,16 +168,16 @@ router.put("/admin/orders/:ref/status", requireAdmin, async (req: any, res) => {
 
     if (!updated) return res.status(404).json({ error: "Commande introuvable" });
 
-    // Notifier l'utilisateur par email si statut changé
+    // Notifier l'utilisateur par email si statut changÃ©
     const orderData = updated.data as any;
     const userEmail = orderData?.userEmail?.trim();
     if (userEmail) {
       const labelMap: Record<string, string> = {
-        confirmed:  "✅ Commande confirmée",
-        shipped:    "🚚 Commande en livraison",
-        delivered:  "🎉 Commande livrée",
-        cancelled:  "❌ Commande annulée",
-        pending:    "⏳ Commande en attente",
+        confirmed:  "âœ… Commande confirmÃ©e",
+        shipped:    "ðŸšš Commande en livraison",
+        delivered:  "ðŸŽ‰ Commande livrÃ©e",
+        cancelled:  "âŒ Commande annulÃ©e",
+        pending:    "â³ Commande en attente",
       };
       const label = labelMap[status] ?? status;
       const msgHtml = statusMessage
@@ -169,27 +185,27 @@ router.put("/admin/orders/:ref/status", requireAdmin, async (req: any, res) => {
         : "";
       sendEmail({
         to:      userEmail,
-        subject: `${label} — Réf. ${ref} — KDO Cameroun`,
+        subject: `${label} â€” RÃ©f. ${ref} â€” KDO Cameroun`,
         html:    `<!DOCTYPE html><html><body style="font-family:Arial,sans-serif;background:#F5F7FA;padding:30px 0;">
           <table width="100%" cellpadding="0" cellspacing="0">
             <tr><td align="center">
               <table width="600" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,.09);">
                 <tr><td style="background:linear-gradient(135deg,#0066CC,#1A8FE3);padding:28px 32px;text-align:center;">
                   <h1 style="margin:0;color:#fff;font-size:22px;">${label}</h1>
-                  <p style="margin:6px 0 0;color:rgba(255,255,255,.9);font-size:14px;">Référence : <strong>${ref}</strong></p>
+                  <p style="margin:6px 0 0;color:rgba(255,255,255,.9);font-size:14px;">RÃ©fÃ©rence : <strong>${ref}</strong></p>
                 </td></tr>
                 <tr><td style="padding:28px 32px;">
-                  <p style="margin:0 0 10px;font-size:16px;color:#1A1A1A;font-weight:600;">Bonjour ${orderData?.delivery?.fullName || "cher client"} 👋</p>
+                  <p style="margin:0 0 10px;font-size:16px;color:#1A1A1A;font-weight:600;">Bonjour ${orderData?.delivery?.fullName || "cher client"} ðŸ‘‹</p>
                   ${msgHtml}
                   <p style="margin:0;font-size:14px;color:#555;line-height:1.7;">
-                    Pour toute question, notre équipe reste disponible via WhatsApp ou sur notre site :
+                    Pour toute question, notre Ã©quipe reste disponible via WhatsApp ou sur notre site :
                     <a href="https://chezkdo.com" style="color:#FF6B00;font-weight:700;">chezkdo.com</a>
                   </p>
                 </td></tr>
                 <tr><td style="background:#111;padding:16px 32px;text-align:center;">
                   <p style="margin:0 0 4px;color:rgba(255,255,255,.5);font-size:11px;">
-                    Propulsé par <a href="https://socialboosthorizon.com" style="color:rgba(255,255,255,.7);text-decoration:none;font-weight:600;">Social Boost Horizon</a>
-                    &nbsp;·&nbsp;<em>votre visibilité notre horizon</em>
+                    PropulsÃ© par <a href="https://socialboosthorizon.com" style="color:rgba(255,255,255,.7);text-decoration:none;font-weight:600;">Social Boost Horizon</a>
+                    &nbsp;Â·&nbsp;<em>votre visibilitÃ© notre horizon</em>
                   </p>
                 </td></tr>
               </table>
@@ -205,7 +221,7 @@ router.put("/admin/orders/:ref/status", requireAdmin, async (req: any, res) => {
   }
 });
 
-// ─── GET /admin/users ─────────────────────────────────────────────────────────
+// â”€â”€â”€ GET /admin/users â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 router.get("/admin/users", requireAdmin, async (req, res) => {
   try {
     const limit  = Math.min(parseInt((req.query as any).limit  ?? "50"),  200);
@@ -228,13 +244,13 @@ router.get("/admin/users", requireAdmin, async (req, res) => {
   }
 });
 
-// ─── GET /admin/admins ────────────────────────────────────────────────────────
+// â”€â”€â”€ GET /admin/admins â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 router.get("/admin/admins", requireAdmin, requireSuper, async (_req, res) => {
   try {
     const rows = await db.select().from(kdoAdminsTable).orderBy(kdoAdminsTable.createdAt);
     return res.json({
       admins: [
-        { id: "super", email: SUPER_ADMIN_EMAIL, name: "Super Admin (propriétaire)", role: "super", permissions: null, addedBy: null },
+        { id: "super", email: SUPER_ADMIN_EMAIL, name: "Super Admin (propriÃ©taire)", role: "super", permissions: null, addedBy: null },
         ...rows,
       ],
     });
@@ -243,14 +259,14 @@ router.get("/admin/admins", requireAdmin, requireSuper, async (_req, res) => {
   }
 });
 
-// ─── POST /admin/admins ───────────────────────────────────────────────────────
+// â”€â”€â”€ POST /admin/admins â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 router.post("/admin/admins", requireAdmin, requireSuper, async (req: any, res) => {
   const { email, name, role, permissions } = req.body as {
     email?: string; name?: string; role?: string; permissions?: object;
   };
   if (!email?.trim()) return res.status(400).json({ error: "email requis" });
   if (email.trim().toLowerCase() === SUPER_ADMIN_EMAIL.toLowerCase()) {
-    return res.status(409).json({ error: "Cet email est déjà super-administrateur" });
+    return res.status(409).json({ error: "Cet email est dÃ©jÃ  super-administrateur" });
   }
   const VALID_ROLES = ["manager", "viewer"];
   const safeRole = VALID_ROLES.includes(role ?? "") ? role! : "manager";
@@ -265,14 +281,14 @@ router.post("/admin/admins", requireAdmin, requireSuper, async (req: any, res) =
       addedBy:     req.adminEmail,
     }).onConflictDoNothing().returning();
 
-    if (!inserted) return res.status(409).json({ error: "Cet email est déjà administrateur" });
+    if (!inserted) return res.status(409).json({ error: "Cet email est dÃ©jÃ  administrateur" });
     return res.status(201).json({ admin: inserted });
   } catch (e: any) {
     return res.status(500).json({ error: e.message });
   }
 });
 
-// ─── DELETE /admin/admins/:email ──────────────────────────────────────────────
+// â”€â”€â”€ DELETE /admin/admins/:email â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 router.delete("/admin/admins/:email", requireAdmin, requireSuper, async (req: any, res) => {
   const target = req.params.email.toLowerCase();
   if (target === SUPER_ADMIN_EMAIL.toLowerCase()) {
@@ -286,57 +302,155 @@ router.delete("/admin/admins/:email", requireAdmin, requireSuper, async (req: an
   }
 });
 
-// ─── Unavailable products (existing logic kept) ───────────────────────────────
-interface UnavailableEntry { productId: string; city: string; }
-function loadUnavailable(): UnavailableEntry[] {
+// â”€â”€â”€ Unavailable products (existing logic kept) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+interface UnavailableEntry {
+  productId: string;
+  city: string;
+}
+
+let unavailableTableReady: Promise<void> | null = null;
+
+function ensureUnavailableTable(): Promise<void> {
+  if (!unavailableTableReady) {
+    unavailableTableReady = db.execute(sql`
+      CREATE TABLE IF NOT EXISTS kdo_unavailable_products (
+        product_id text NOT NULL,
+        city text NOT NULL,
+        created_at timestamptz NOT NULL DEFAULT now(),
+        PRIMARY KEY (product_id, city)
+      )
+    `)
+      .then(() => undefined)
+      .catch((error) => {
+        unavailableTableReady = null;
+        throw error;
+      });
+  }
+
+  return unavailableTableReady;
+}
+
+async function loadUnavailable(): Promise<UnavailableEntry[]> {
+  await ensureUnavailableTable();
+
+  const result = await db.execute(sql`
+    SELECT
+      product_id AS "productId",
+      city
+    FROM kdo_unavailable_products
+    ORDER BY created_at ASC
+  `);
+
+  return result.rows.map((row: any) => ({
+    productId: String(row.productId),
+    city: String(row.city),
+  }));
+}
+
+router.get("/admin/unavailable", async (_req, res) => {
   try {
-    if (fs.existsSync(UNAVAILABLE_FILE)) {
-      const raw = JSON.parse(fs.readFileSync(UNAVAILABLE_FILE, "utf-8"));
-      if (Array.isArray(raw) && raw.length > 0 && typeof raw[0] === "string") {
-        return (raw as string[]).map(id => ({ productId: id, city: "*" }));
-      }
-      return raw as UnavailableEntry[];
+    const unavailable = await loadUnavailable();
+    return res.json({ unavailable });
+  } catch (e: any) {
+    console.error("[admin/unavailable] GET erreur:", e);
+    return res.status(500).json({
+      error: e?.message || "Erreur lors du chargement des indisponibilitÃ©s",
+    });
+  }
+});
+
+router.post("/admin/mark-unavailable", async (req, res) => {
+  try {
+    const {
+      productId,
+      city,
+      adminEmail,
+    } = req.body as {
+      productId?: string;
+      city?: string;
+      adminEmail?: string;
+    };
+
+    if (!productId) {
+      return res.status(400).json({ error: "productId requis" });
     }
-  } catch {}
-  return [];
-}
-function saveUnavailable(e: UnavailableEntry[]) {
-  fs.writeFileSync(UNAVAILABLE_FILE, JSON.stringify(e, null, 2), "utf-8");
-}
 
-const LEGACY_ADMIN = [SUPER_ADMIN_EMAIL, "mcexauofficiel@gmail.com"];
+    if (!city) {
+      return res.status(400).json({ error: "city requis" });
+    }
 
-router.get("/admin/unavailable", (_req, res) => {
-  res.json({ unavailable: loadUnavailable() });
+    if (!adminEmail || !LEGACY_ADMIN.includes(adminEmail)) {
+      return res.status(403).json({
+        error: "AccÃ¨s rÃ©servÃ© aux administrateurs KDO",
+      });
+    }
+
+    await ensureUnavailableTable();
+
+    await db.execute(sql`
+      INSERT INTO kdo_unavailable_products (product_id, city)
+      VALUES (${productId}, ${city})
+      ON CONFLICT (product_id, city) DO NOTHING
+    `);
+
+    const unavailable = await loadUnavailable();
+
+    return res.json({
+      ok: true,
+      unavailable,
+    });
+  } catch (e: any) {
+    console.error("[admin/mark-unavailable] POST erreur:", e);
+    return res.status(500).json({
+      error: e?.message || "Erreur lors de l'enregistrement",
+    });
+  }
 });
 
-router.post("/admin/mark-unavailable", (req, res) => {
-  const { productId, city, adminEmail } = req.body as { productId?: string; city?: string; adminEmail?: string };
-  if (!productId) return res.status(400).json({ error: "productId requis" });
-  if (!city)      return res.status(400).json({ error: "city requis" });
-  if (!adminEmail || !LEGACY_ADMIN.includes(adminEmail)) {
-    return res.status(403).json({ error: "Accès réservé aux administrateurs KDO" });
-  }
-  const entries = loadUnavailable();
-  if (!entries.some(e => e.productId === productId && e.city === city)) {
-    entries.push({ productId, city });
-    saveUnavailable(entries);
-  }
-  return res.json({ ok: true, unavailable: entries });
-});
+router.delete("/admin/mark-unavailable/:productId", async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const {
+      adminEmail,
+      city,
+    } = req.body as {
+      adminEmail?: string;
+      city?: string;
+    };
 
-router.delete("/admin/mark-unavailable/:productId", (req, res) => {
-  const { productId } = req.params;
-  const { adminEmail, city } = req.body as { adminEmail?: string; city?: string };
-  if (!adminEmail || !LEGACY_ADMIN.includes(adminEmail)) {
-    return res.status(403).json({ error: "Accès réservé aux administrateurs KDO" });
+    if (!adminEmail || !LEGACY_ADMIN.includes(adminEmail)) {
+      return res.status(403).json({
+        error: "AccÃ¨s rÃ©servÃ© aux administrateurs KDO",
+      });
+    }
+
+    await ensureUnavailableTable();
+
+    if (city) {
+      await db.execute(sql`
+        DELETE FROM kdo_unavailable_products
+        WHERE product_id = ${productId}
+          AND city = ${city}
+      `);
+    } else {
+      await db.execute(sql`
+        DELETE FROM kdo_unavailable_products
+        WHERE product_id = ${productId}
+      `);
+    }
+
+    const unavailable = await loadUnavailable();
+
+    return res.json({
+      ok: true,
+      unavailable,
+    });
+  } catch (e: any) {
+    console.error("[admin/mark-unavailable] DELETE erreur:", e);
+    return res.status(500).json({
+      error: e?.message || "Erreur lors de la suppression",
+    });
   }
-  let entries = loadUnavailable();
-  entries = city
-    ? entries.filter(e => !(e.productId === productId && e.city === city))
-    : entries.filter(e => e.productId !== productId);
-  saveUnavailable(entries);
-  return res.json({ ok: true, unavailable: entries });
 });
 
 export default router;
