@@ -11,7 +11,7 @@
         "buildType": "apk",
         "image": "ubuntu-24.04-jdk-17-ndk-r27b"
       },
-      "pnpm": "12.3.4",
+      "pnpm": "10.31.0",
       "environment": "preview"
     },
     "production": {
