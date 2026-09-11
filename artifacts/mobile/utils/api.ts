@@ -1,5 +1,4 @@
-const DOMAIN = process.env["EXPO_PUBLIC_DOMAIN"] || "kdo-cameroon-app.replit.app";
-export const API_BASE = `https://${DOMAIN}/api`;
+﻿const API_BASE = process.env.EXPO_PUBLIC_API_URL || "https://kdo-api-server.vercel.app/api";
 
 async function request(method: string, path: string, body?: object, token?: string) {
   const headers: Record<string, string> = {};
@@ -26,3 +25,4 @@ export const apiGet    = (path: string, token?: string)               => request
 export const apiPost   = (path: string, body: object, token?: string) => request("POST",   path, body,      token);
 export const apiPut    = (path: string, body: object, token?: string) => request("PUT",    path, body,      token);
 export const apiDelete = (path: string, token?: string)               => request("DELETE", path, undefined, token);
+

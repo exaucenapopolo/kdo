@@ -1,6 +1,5 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
-
-const DOMAIN = process.env["EXPO_PUBLIC_DOMAIN"] || "https://kdo-api-server.vercel.app/api";
+﻿import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
+const DOMAIN = new URL(process.env.EXPO_PUBLIC_API_URL || "https://kdo-api-server.vercel.app/api").host;
 const API_BASE = `https://${DOMAIN}/api`;
 
 export interface UnavailableEntry {
@@ -81,3 +80,4 @@ export function useUnavailable() {
   if (!ctx) throw new Error("useUnavailable must be used within UnavailableProvider");
   return ctx;
 }
+
