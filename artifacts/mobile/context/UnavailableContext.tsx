@@ -1,4 +1,5 @@
-import React, { AppState, createContext, useCallback, useContext, useEffect, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { AppState } from "react-native";
 
 const DOMAIN = new URL(
   process.env.EXPO_PUBLIC_API_URL || "https://kdo-api-server.vercel.app/api"
