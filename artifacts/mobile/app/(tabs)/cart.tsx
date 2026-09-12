@@ -1,4 +1,4 @@
-﻿import { Feather } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -28,31 +28,31 @@ import { useUserData } from "@/context/UserDataContext";
 import { BOUTIQUES } from "@/data/boutiques";
 import { formatPrice } from "@/data/products";
 
-// â”€â”€â”€ Constants â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-const BIG_CITIES = ["YaoundÃ©", "Douala", "Bafoussam"];
+// ─── Constants ────────────────────────────────────────────────────────────────
+const BIG_CITIES = ["Yaoundé", "Douala", "Bafoussam"];
 const SMALL_FEE  = 1000;
 const TAB_H      = Platform.OS === "web" ? 84 : 60;
 const DOMAIN = new URL(process.env.EXPO_PUBLIC_API_URL || "https://kdo-api-server.vercel.app/api").host;
 const API_NOTIFY = `https://${DOMAIN}/api/payment/confirm`;
 
 const PROMO_CODES: Record<string, { gift: string }> = {
-  "KDO10":     { gift: "Une clÃ© USB 16Go offerte" },
+  "KDO10":     { gift: "Une clé USB 16Go offerte" },
   "KDO15":     { gift: "Une souris sans fil offerte" },
-  "KDO20":     { gift: "Un sac Ã  dos ordinateur offert" },
+  "KDO20":     { gift: "Un sac à dos ordinateur offert" },
   "KDO2000":   { gift: "Un antivirus 1 an offert" },
   "BIENVENUE": { gift: "Un chargeur USB offert" },
-  "NOEL25":    { gift: "ClÃ© USB + cÃ¢ble chargeur offerts" },
+  "NOEL25":    { gift: "Clé USB + câble chargeur offerts" },
 };
 
 const CITY_TO_BOUTIQUE_ID: Record<string, string> = {
-  "YaoundÃ©":    "yaounde",
+  "Yaoundé":    "yaounde",
   "Douala":     "douala",
   "Bafoussam":  "bafoussam",
   "Bertoua":    "bertoua",
   "Dschang":    "dschang",
   "Maroua":     "maroua",
   "Garoua":     "garoua",
-  "NgaoundÃ©rÃ©": "ngaoundere",
+  "Ngaoundéré": "ngaoundere",
 };
 
 function getDelivFee(city: string, mode: "domicile" | "boutique"): number {
@@ -62,7 +62,7 @@ function getDelivFee(city: string, mode: "domicile" | "boutique"): number {
 
 function getDelivDisplay(city: string, mode: "domicile" | "boutique"): string {
   if (mode === "boutique") return "Gratuit";
-  if (BIG_CITIES.includes(city)) return "1 000 â€“ 2 000 FCFA*";
+  if (BIG_CITIES.includes(city)) return "1 000 – 2 000 FCFA*";
   return "1 000 FCFA";
 }
 
@@ -77,20 +77,20 @@ async function downloadBoutiquePhoto(imageUrl: string) {
   try {
     const { status } = await MediaLibrary.requestPermissionsAsync();
     if (status !== "granted") {
-      Alert.alert("Permission refusÃ©e", "Autorisez l'accÃ¨s Ã  la galerie pour tÃ©lÃ©charger la photo.");
+      Alert.alert("Permission refusée", "Autorisez l'accès à la galerie pour télécharger la photo.");
       return;
     }
     const filename    = `KDO_Boutique_${Date.now()}.jpg`;
     const destination = new File(Paths.cache, filename);
     const downloaded  = await File.downloadFileAsync(imageUrl, destination);
     await MediaLibrary.saveToLibraryAsync(downloaded.uri);
-    Alert.alert("TÃ©lÃ©chargÃ© !", "La photo a Ã©tÃ© sauvegardÃ©e dans votre galerie.");
+    Alert.alert("Téléchargé !", "La photo a été sauvegardée dans votre galerie.");
   } catch {
-    Alert.alert("Erreur", "Impossible de tÃ©lÃ©charger la photo.");
+    Alert.alert("Erreur", "Impossible de télécharger la photo.");
   }
 }
 
-// â”€â”€â”€ Step progress bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Step progress bar ────────────────────────────────────────────────────────
 const STEP_DEFS = [
   { id: "cart",     label: "Panier" },
   { id: "info",     label: "Infos" },
@@ -141,7 +141,7 @@ const sb = StyleSheet.create({
   lineDone:   { backgroundColor: "#28A745" },
 });
 
-// â”€â”€â”€ Field helper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Field helper ─────────────────────────────────────────────────────────────
 function Field({ label, icon, value, onChangeText, placeholder, kb, multiline }: {
   label: string; icon: string; value: string;
   onChangeText: (v: string) => void;
@@ -167,7 +167,7 @@ function Field({ label, icon, value, onChangeText, placeholder, kb, multiline }:
   );
 }
 
-// â”€â”€â”€ Main screen â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Main screen ──────────────────────────────────────────────────────────────
 export default function CartScreen() {
   const router                          = useRouter();
   const insets                          = useSafeAreaInsets();
@@ -187,7 +187,7 @@ export default function CartScreen() {
   const [custPhone, setCustPhone] = useState(user?.phone ?? "");
   const [custEmail, setCustEmail] = useState(user?.email ?? "");
 
-  const [delivCity,    setDelivCity]    = useState(selectedCity ?? "YaoundÃ©");
+  const [delivCity,    setDelivCity]    = useState(selectedCity ?? "Yaoundé");
   const [delivMode,    setDelivMode]    = useState<"domicile" | "boutique">("domicile");
   const [quartier,     setQuartier]     = useState("");
   const [landmark,     setLandmark]     = useState("");
@@ -205,21 +205,21 @@ export default function CartScreen() {
   useEffect(() => { if (selectedCity) setDelivCity(selectedCity); }, [selectedCity]);
   useEffect(() => { scrollRef.current?.scrollTo({ y: 0, animated: true }); }, [step]);
 
-  // â”€â”€ Computed â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Computed ──────────────────────────────────────────────────────────────
   const subtotal   = items.reduce((s, i) => s + i.price * i.quantity, 0);
   const delivFee   = getDelivFee(delivCity, delivMode);
   const total      = subtotal + delivFee;
   const earnPoints = Math.floor(total / 2000); // 2 000 FCFA = 1 point
 
-  // Boutique de la ville sÃ©lectionnÃ©e
+  // Boutique de la ville sélectionnée
   const boutiqueId = CITY_TO_BOUTIQUE_ID[delivCity];
   const boutique   = BOUTIQUES.find(b => b.id === boutiqueId);
 
-  // â”€â”€ Promo â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Promo ─────────────────────────────────────────────────────────────────
   const applyPromo = () => {
     const code = promoInput.trim().toUpperCase();
     if (!code) { setPromoError("Entrez votre code promo KDO"); return; }
-    if (usedPromos.includes(code)) { setPromoError("Ce code a dÃ©jÃ  Ã©tÃ© utilisÃ©"); return; }
+    if (usedPromos.includes(code)) { setPromoError("Ce code a déjà été utilisé"); return; }
     const entry = PROMO_CODES[code];
     if (!entry) { setPromoError("Code invalide. Obtenez votre code en boutique ou chez un agent KDO."); return; }
     setPromo({ code, gift: entry.gift });
@@ -227,7 +227,7 @@ export default function CartScreen() {
     setPromoInput("");
   };
 
-  // â”€â”€ Navigation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Navigation ────────────────────────────────────────────────────────────
   const goNext = () => {
     if (step === "cart") {
       if (items.length === 0) { Alert.alert("Panier vide", "Ajoutez des produits pour commander."); return; }
@@ -235,11 +235,11 @@ export default function CartScreen() {
     } else if (step === "info") {
       if (!custName.trim()) { Alert.alert("Nom requis", "Entrez votre nom complet."); return; }
       const digits = custPhone.replace(/\D/g, "");
-      if (digits.length < 8) { Alert.alert("TÃ©lÃ©phone invalide", "Ex: 691234567 ou +237691234567"); return; }
+      if (digits.length < 8) { Alert.alert("Téléphone invalide", "Ex: 691234567 ou +237691234567"); return; }
       setStep("delivery");
     } else if (step === "delivery") {
       if (delivMode === "domicile" && !quartier.trim()) {
-        Alert.alert("Quartier requis", "Indiquez votre quartier pour la livraison Ã  domicile."); return;
+        Alert.alert("Quartier requis", "Indiquez votre quartier pour la livraison à domicile."); return;
       }
       setStep("confirm");
     } else if (step === "confirm") {
@@ -254,7 +254,7 @@ export default function CartScreen() {
     if (step === "confirm")  { setStep("delivery"); return; }
   };
 
-  // â”€â”€ Confirm â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Confirm ───────────────────────────────────────────────────────────────
   const handleConfirm = async () => {
     setIsSubmitting(true);
 
@@ -272,26 +272,26 @@ export default function CartScreen() {
         city:         delivCity,
         quartier:     quartier.trim(),
         deliveryMode: delivMode,
-        address:      `${quartier.trim()}${landmark.trim() ? " â€” " + landmark.trim() : ""}`,
+        address:      `${quartier.trim()}${landmark.trim() ? " — " + landmark.trim() : ""}`,
         instructions: instructions.trim(),
       },
       whatsappPhone: custPhone.trim(),
       callPhone:     custPhone.trim(),
       userEmail:     custEmail.trim() || undefined,
-      paymentMethod: "Paiement Ã  la livraison",
+      paymentMethod: delivMode === "boutique" ? "Paiement en boutique" : "Paiement à la livraison",
       promoCode:     promo?.code,
       points:        earnPoints,
     };
 
     try {
-      // Sync identitÃ© utilisateur si nÃ©cessaire
+      // Sync identité utilisateur si nécessaire
       if (!user && custName.trim() && custPhone.trim()) {
         try { await register({ name: custName.trim(), phone: custPhone.trim(), email: custEmail.trim() || undefined }); } catch {}
       } else if (user && (custName.trim() !== user.name || custPhone.trim() !== user.phone)) {
         try { await updateProfile({ name: custName.trim(), phone: custPhone.trim() }); } catch {}
       }
 
-      // Sauvegarde de la commande (server PostgreSQL â†’ ref assignÃ©e par le serveur)
+      // Sauvegarde de la commande (server PostgreSQL → ref assignée par le serveur)
       const savedOrder = await saveOrder(orderData as any);
       const ref = savedOrder.ref;
 
@@ -304,7 +304,7 @@ export default function CartScreen() {
             phone:        custPhone.trim(),
             city:         delivCity,
             quartier:     quartier.trim(),
-            address:      `${quartier.trim()}${landmark.trim() ? " â€” " + landmark.trim() : ""}`,
+            address:      `${quartier.trim()}${landmark.trim() ? " — " + landmark.trim() : ""}`,
             deliveryMode: delivMode,
             instructions: instructions.trim(),
           });
@@ -323,15 +323,15 @@ export default function CartScreen() {
       clearCart();
       setStep("success");
     } catch {
-      Alert.alert("Erreur", "Une erreur est survenue. RÃ©essayez.");
+      Alert.alert("Erreur", "Une erreur est survenue. Réessayez.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ─────────────────────────────────────────────────────────────────────────
   //  EMPTY CART
-  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ─────────────────────────────────────────────────────────────────────────
   if (items.length === 0 && step === "cart") {
     return (
       <View style={s.root}>
@@ -347,16 +347,16 @@ export default function CartScreen() {
           <Text style={s.emptyTitle}>Panier vide</Text>
           <Text style={s.emptySub}>Ajoutez des produits pour passer commande</Text>
           <TouchableOpacity style={s.emptyBtn} onPress={() => router.push("/(tabs)/" as any)}>
-            <Text style={s.emptyBtnTxt}>DÃ©couvrir nos produits</Text>
+            <Text style={s.emptyBtnTxt}>Découvrir nos produits</Text>
           </TouchableOpacity>
         </View>
       </View>
     );
   }
 
-  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ─────────────────────────────────────────────────────────────────────────
   //  SUCCESS
-  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ─────────────────────────────────────────────────────────────────────────
   if (step === "success") {
     return (
       <View style={s.root}>
@@ -365,15 +365,15 @@ export default function CartScreen() {
           showsVerticalScrollIndicator={false}
         >
           <View style={s.successCheck}><Feather name="check" size={42} color="#fff" /></View>
-          <Text style={s.successTitle}>Commande confirmÃ©e !</Text>
-          <Text style={s.successGreet}>Merci {custName.split(" ")[0]} ðŸŽ‰</Text>
+          <Text style={s.successTitle}>Commande confirmée !</Text>
+          <Text style={s.successGreet}>Merci {custName.split(" ")[0]} 🎉</Text>
 
           <View style={s.successCard}>
             {[
-              { icon: "hash",      lbl: "RÃ©fÃ©rence",  val: orderRef },
+              { icon: "hash",      lbl: "Référence",  val: orderRef },
               { icon: "map-pin",   lbl: "Ville",      val: delivCity },
               { icon: "user",      lbl: "Nom",        val: custName },
-              { icon: "phone",     lbl: "TÃ©lÃ©phone",  val: custPhone },
+              { icon: "phone",     lbl: "Téléphone",  val: custPhone },
             ].map((row, i) => (
               <React.Fragment key={row.lbl}>
                 {i > 0 && <View style={s.successDivider} />}
@@ -387,7 +387,7 @@ export default function CartScreen() {
             <View style={s.successDivider} />
             <View style={s.successRow}>
               <Feather name="dollar-sign" size={13} color="#FF6B00" />
-              <Text style={s.successLbl}>Total Ã  payer</Text>
+              <Text style={s.successLbl}>Total à payer</Text>
               <Text style={[s.successVal, { color: "#FF6B00", fontWeight: "800" }]}>{formatPrice(total)}</Text>
             </View>
             {BIG_CITIES.includes(delivCity) && delivMode === "domicile" && (
@@ -396,7 +396,7 @@ export default function CartScreen() {
                 <View style={s.successRow}>
                   <Feather name="info" size={13} color="#999" />
                   <Text style={[s.successLbl, { flex: 1 }]}>Livraison</Text>
-                  <Text style={[s.successVal, { fontSize: 11, color: "#888" }]}>1 000â€“2 000 FCFA*</Text>
+                  <Text style={[s.successVal, { fontSize: 11, color: "#888" }]}>1 000–2 000 FCFA*</Text>
                 </View>
               </>
             )}
@@ -406,19 +406,26 @@ export default function CartScreen() {
             <View style={s.giftBox}>
               <Feather name="gift" size={18} color="#FF6B00" />
               <View style={{ flex: 1 }}>
-                <Text style={s.giftTitle}>Cadeau KDO offert ðŸŽ</Text>
-                <Text style={s.giftSub}>{promo.gift} Â· livrÃ© avec votre commande</Text>
+                <Text style={s.giftTitle}>Cadeau KDO offert 🎁</Text>
+                <Text style={s.giftSub}>{promo.gift} · livré avec votre commande</Text>
               </View>
             </View>
           )}
 
           <View style={[s.padBox, { flexDirection: "row", gap: 12, alignItems: "flex-start" }]}>
-            <Feather name="truck" size={20} color="#fff" style={{ marginTop: 2 }} />
+            <Feather name={delivMode === "boutique" ? "map-pin" : "truck"} size={20} color="#fff" style={{ marginTop: 2 }} />
             <View style={{ flex: 1 }}>
-              <Text style={s.padTitle}>Paiement Ã  la livraison</Text>
+              <Text style={s.padTitle}>
+                {delivMode === "boutique" ? "Paiement en boutique" : "Paiement à la livraison"}
+              </Text>
               <Text style={s.padText}>
-                Notre livreur vous contactera sur le <Text style={{ fontWeight: "700" }}>{custPhone}</Text> pour organiser la livraison.{"\n"}
-                Vous payez uniquement aprÃ¨s avoir vÃ©rifiÃ© votre commande.
+                {delivMode === "boutique"
+                  ? "Vous paierez directement en boutique au moment du retrait. Aucun frais de livraison ne sera facturé."
+                  : <>
+                      Notre livreur vous contactera sur le <Text style={{ fontWeight: "700" }}>{custPhone}</Text> pour organiser la livraison.{"\n"}
+                      Vous payez uniquement après avoir vérifié votre commande.
+                    </>
+                }
               </Text>
             </View>
           </View>
@@ -426,14 +433,14 @@ export default function CartScreen() {
           {BIG_CITIES.includes(delivCity) && delivMode === "domicile" && (
             <View style={s.noteVariableFee}>
               <Feather name="info" size={12} color="#856404" />
-              <Text style={s.noteVariableFeeTxt}>* Frais de livraison entre 1 000 et 2 000 FCFA selon votre quartier Ã  {delivCity}. Notre Ã©quipe vous confirmera le montant exact lors du contact.</Text>
+              <Text style={s.noteVariableFeeTxt}>* Frais de livraison entre 1 000 et 2 000 FCFA selon votre quartier à {delivCity}. Notre équipe vous confirmera le montant exact lors du contact.</Text>
             </View>
           )}
 
           {earnPoints > 0 && (
             <View style={s.pointsEarned}>
               <Feather name="star" size={14} color="#FF6B00" />
-              <Text style={s.pointsEarnedTxt}> Vous avez gagnÃ© <Text style={{ fontWeight: "800", color: "#FF6B00" }}>{earnPoints} points KDO</Text> !</Text>
+              <Text style={s.pointsEarnedTxt}> Vous avez gagné <Text style={{ fontWeight: "800", color: "#FF6B00" }}>{earnPoints} points KDO</Text> !</Text>
             </View>
           )}
 
@@ -459,9 +466,9 @@ export default function CartScreen() {
     );
   }
 
-  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ─────────────────────────────────────────────────────────────────────────
   //  CHECKOUT
-  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ─────────────────────────────────────────────────────────────────────────
   return (
     <KeyboardAvoidingView style={s.root} behavior={Platform.OS === "ios" ? "padding" : undefined}>
       {/* Header */}
@@ -473,7 +480,7 @@ export default function CartScreen() {
           {step === "cart"     ? `Panier (${items.length})`
            : step === "info"     ? "Vos informations"
            : step === "delivery" ? "Livraison"
-           : "RÃ©capitulatif"}
+           : "Récapitulatif"}
         </Text>
         <View style={{ width: 40 }} />
       </View>
@@ -486,7 +493,7 @@ export default function CartScreen() {
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{ paddingBottom: TAB_H + 150 }}
       >
-        {/* â”€â”€ STEP: CART â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+        {/* ── STEP: CART ─────────────────────────────────────────────── */}
         {step === "cart" && (
           <View>
             {items.map(item => (
@@ -515,12 +522,12 @@ export default function CartScreen() {
               <Text style={s.blockTitle}>Code promo KDO</Text>
               <View style={s.promoHint}>
                 <Feather name="tag" size={13} color="#FF6B00" />
-                <Text style={s.promoHintTxt}>Obtenez votre code promo en boutique ou auprÃ¨s d'un agent KDO pour recevoir un cadeau avec votre commande.</Text>
+                <Text style={s.promoHintTxt}>Obtenez votre code promo en boutique ou auprès d'un agent KDO pour recevoir un cadeau avec votre commande.</Text>
               </View>
               {promo ? (
                 <View style={s.promoApplied}>
                   <Feather name="gift" size={15} color="#28A745" />
-                  <Text style={s.promoAppliedTxt}>ðŸŽ {promo.gift}</Text>
+                  <Text style={s.promoAppliedTxt}>🎁 {promo.gift}</Text>
                   <TouchableOpacity onPress={() => setPromo(null)} style={{ marginLeft: "auto" }}>
                     <Feather name="x" size={15} color="#FF4D4F" />
                   </TouchableOpacity>
@@ -545,7 +552,7 @@ export default function CartScreen() {
 
             {/* Summary */}
             <View style={s.block}>
-              <Text style={s.blockTitle}>RÃ©capitulatif</Text>
+              <Text style={s.blockTitle}>Récapitulatif</Text>
               <View style={s.sumRow}>
                 <Text style={s.sumLbl}>Sous-total</Text>
                 <Text style={s.sumVal}>{formatPrice(subtotal)}</Text>
@@ -555,40 +562,40 @@ export default function CartScreen() {
                 <Text style={s.sumVal}>{getDelivDisplay(delivCity, "domicile")}</Text>
               </View>
               {BIG_CITIES.includes(delivCity) && (
-                <Text style={s.bigCityNote}>* Frais confirmÃ©s par notre Ã©quipe entre 1 000 et 2 000 FCFA</Text>
+                <Text style={s.bigCityNote}>* Frais confirmés par notre équipe entre 1 000 et 2 000 FCFA</Text>
               )}
               <View style={[s.sumRow, s.sumTotalRow]}>
-                <Text style={s.sumTotalLbl}>EstimÃ©</Text>
+                <Text style={s.sumTotalLbl}>Estimé</Text>
                 <Text style={s.sumTotalVal}>{formatPrice(subtotal + SMALL_FEE)}</Text>
               </View>
-              <Text style={s.delivNote}>ðŸ’° Paiement Ã  la livraison Â· Retrait boutique = livraison gratuite</Text>
+              <Text style={s.delivNote}>💰 Paiement à la livraison · Retrait boutique = livraison gratuite</Text>
             </View>
           </View>
         )}
 
-        {/* â”€â”€ STEP: INFO â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+        {/* ── STEP: INFO ─────────────────────────────────────────────── */}
         {step === "info" && (
           <View style={s.formWrap}>
             <View style={s.heroBox}>
               <Feather name="user" size={20} color="#FF6B00" />
               <View style={{ flex: 1 }}>
-                <Text style={s.heroTitle}>Vos coordonnÃ©es</Text>
+                <Text style={s.heroTitle}>Vos coordonnées</Text>
                 <Text style={s.heroSub}>Pour vous contacter lors de la livraison</Text>
               </View>
             </View>
             <Field label="Nom complet *" icon="user" value={custName} onChangeText={setCustName} placeholder="Jean Dupont" />
-            <Field label="TÃ©lÃ©phone WhatsApp / Appel *" icon="phone" value={custPhone} onChangeText={setCustPhone} placeholder="691 234 567" kb="phone-pad" />
+            <Field label="Téléphone WhatsApp / Appel *" icon="phone" value={custPhone} onChangeText={setCustPhone} placeholder="691 234 567" kb="phone-pad" />
             <Field label="Email (optionnel)" icon="mail" value={custEmail} onChangeText={setCustEmail} placeholder="vous@email.com" kb="email-address" />
             {!user && (
               <View style={s.noteBox}>
                 <Feather name="info" size={13} color="#2563EB" />
-                <Text style={s.noteBoxTxt}>Un compte KDO sera crÃ©Ã© automatiquement pour suivre vos commandes.</Text>
+                <Text style={s.noteBoxTxt}>Un compte KDO sera créé automatiquement pour suivre vos commandes.</Text>
               </View>
             )}
           </View>
         )}
 
-        {/* â”€â”€ STEP: DELIVERY â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+        {/* ── STEP: DELIVERY ─────────────────────────────────────────── */}
         {step === "delivery" && (
           <View style={s.formWrap}>
             {/* City */}
@@ -611,7 +618,7 @@ export default function CartScreen() {
             )}
 
             {/* Mode */}
-            <Text style={[s.fieldLabel, { marginTop: 16 }]}>Mode de rÃ©ception *</Text>
+            <Text style={[s.fieldLabel, { marginTop: 16 }]}>Mode de réception *</Text>
             <View style={s.modeRow}>
               {([
                 { id: "domicile" as const, icon: "home",    label: "Livraison domicile", sub: getDelivDisplay(delivCity, "domicile") },
@@ -629,19 +636,19 @@ export default function CartScreen() {
             {BIG_CITIES.includes(delivCity) && delivMode === "domicile" && (
               <View style={s.noteBox}>
                 <Feather name="info" size={13} color="#2563EB" />
-                <Text style={s.noteBoxTxt}>Ã€ {delivCity}, la livraison est entre <Text style={{ fontWeight: "700" }}>1 000 et 2 000 FCFA</Text> selon votre quartier. Notre Ã©quipe vous confirmera le montant exact.</Text>
+                <Text style={s.noteBoxTxt}>À {delivCity}, la livraison est entre <Text style={{ fontWeight: "700" }}>1 000 et 2 000 FCFA</Text> selon votre quartier. Notre équipe vous confirmera le montant exact.</Text>
               </View>
             )}
 
             {delivMode === "domicile" && (
               <>
                 <Field label="Quartier *" icon="navigation" value={quartier} onChangeText={setQuartier}
-                  placeholder="Ex: Bastos, Melen, Omnisportâ€¦" />
-                <Field label="RepÃ¨re (optionnel)" icon="map" value={landmark} onChangeText={setLandmark}
-                  placeholder="Ex: PrÃ¨s de la pharmacie, immeuble bleuâ€¦" />
+                  placeholder="Ex: Bastos, Melen, Omnisport…" />
+                <Field label="Repère (optionnel)" icon="map" value={landmark} onChangeText={setLandmark}
+                  placeholder="Ex: Près de la pharmacie, immeuble bleu…" />
                 <Field label="Instructions pour le livreur (optionnel)" icon="message-circle"
                   value={instructions} onChangeText={setInstructions}
-                  placeholder="Ex: Appeler avant d'arriver Â· Laisser au gardienâ€¦"
+                  placeholder="Ex: Appeler avant d'arriver · Laisser au gardien…"
                   multiline />
               </>
             )}
@@ -656,13 +663,13 @@ export default function CartScreen() {
                       <Image source={{ uri: boutique.image }} style={s.boutiqueImg} resizeMode="cover" />
                       <View style={s.boutiqueImgHint}>
                         <Feather name="zoom-in" size={13} color="#fff" />
-                        <Text style={s.boutiqueImgHintTxt}> Agrandir / TÃ©lÃ©charger</Text>
+                        <Text style={s.boutiqueImgHintTxt}> Agrandir / Télécharger</Text>
                       </View>
                     </View>
                   </TouchableOpacity>
 
                   <View style={s.boutiqueBody}>
-                    <Text style={s.boutiqueName}>Boutique KDO â€” {boutique.ville}</Text>
+                    <Text style={s.boutiqueName}>Boutique KDO — {boutique.ville}</Text>
                     <Text style={s.boutiqueDesc}>{boutique.description}</Text>
                     <Text style={s.boutiqueAddr} numberOfLines={4}>{boutique.indication}</Text>
                     <TouchableOpacity
@@ -684,7 +691,7 @@ export default function CartScreen() {
                       onPress={() => downloadBoutiquePhoto(boutique.image)}
                     >
                       <Feather name="download" size={15} color="#fff" />
-                      <Text style={s.zoomDownloadTxt}> TÃ©lÃ©charger la photo</Text>
+                      <Text style={s.zoomDownloadTxt}> Télécharger la photo</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity style={s.zoomCloseBtn} onPress={() => setBoutiqueZoom(false)}>
@@ -697,7 +704,7 @@ export default function CartScreen() {
           </View>
         )}
 
-        {/* â”€â”€ STEP: CONFIRM â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+        {/* ── STEP: CONFIRM ──────────────────────────────────────────── */}
         {step === "confirm" && (
           <View style={s.formWrap}>
             <View style={s.confirmSection}>
@@ -710,9 +717,9 @@ export default function CartScreen() {
             <View style={s.confirmSection}>
               <Text style={s.confirmTitle}><Feather name="truck" size={12} /> Livraison</Text>
               <Text style={s.confirmLine}>
-                {delivMode === "domicile" ? "Ã€ domicile" : "Retrait boutique"} Â· {delivCity}
+                {delivMode === "domicile" ? "À domicile" : "Retrait boutique"} · {delivCity}
               </Text>
-              {!!quartier && <Text style={s.confirmLine}>{quartier}{landmark ? ` â€” ${landmark}` : ""}</Text>}
+              {!!quartier && <Text style={s.confirmLine}>{quartier}{landmark ? ` — ${landmark}` : ""}</Text>}
               {!!instructions && <Text style={[s.confirmLine, { color: "#999", fontStyle: "italic" }]}>"{instructions}"</Text>}
             </View>
 
@@ -721,7 +728,7 @@ export default function CartScreen() {
               {items.map(item => (
                 <View key={item.id} style={s.confirmItemRow}>
                   <Text style={s.confirmItemName} numberOfLines={1}>{item.name}</Text>
-                  <Text style={s.confirmItemAmt}>Ã—{item.quantity} Â· {formatPrice(item.price * item.quantity)}</Text>
+                  <Text style={s.confirmItemAmt}>×{item.quantity} · {formatPrice(item.price * item.quantity)}</Text>
                 </View>
               ))}
             </View>
@@ -730,7 +737,7 @@ export default function CartScreen() {
               <View style={s.giftBox}>
                 <Feather name="gift" size={16} color="#FF6B00" />
                 <View style={{ flex: 1 }}>
-                  <Text style={s.giftTitle}>Cadeau KDO offert ðŸŽ</Text>
+                  <Text style={s.giftTitle}>Cadeau KDO offert 🎁</Text>
                   <Text style={s.giftSub}>{promo.gift}</Text>
                 </View>
               </View>
@@ -741,35 +748,39 @@ export default function CartScreen() {
               <View style={s.confirmRow}><Text style={s.confirmLbl}>Sous-total</Text><Text style={s.confirmAmt}>{formatPrice(subtotal)}</Text></View>
               <View style={s.confirmRow}>
                 <Text style={s.confirmLbl}>Livraison</Text>
-                <Text style={s.confirmAmt}>{delivFee === 0 ? "Gratuit" : BIG_CITIES.includes(delivCity) ? "1 000 â€“ 2 000 FCFA*" : formatPrice(delivFee)}</Text>
+                <Text style={s.confirmAmt}>{delivFee === 0 ? "Gratuit" : BIG_CITIES.includes(delivCity) ? "1 000 – 2 000 FCFA*" : formatPrice(delivFee)}</Text>
               </View>
               <View style={[s.confirmRow, s.confirmTotalRow]}>
-                <Text style={s.confirmTotalLbl}>TOTAL Ã€ PAYER</Text>
+                <Text style={s.confirmTotalLbl}>TOTAL À PAYER</Text>
                 <Text style={s.confirmTotalAmt}>{formatPrice(total)}{BIG_CITIES.includes(delivCity) && delivMode === "domicile" ? "*" : ""}</Text>
               </View>
               {BIG_CITIES.includes(delivCity) && delivMode === "domicile" && (
-                <Text style={{ fontSize: 10, color: "#888", marginTop: 4 }}>* Livraison entre 1 000 et 2 000 FCFA confirmÃ©e par notre Ã©quipe</Text>
+                <Text style={{ fontSize: 10, color: "#888", marginTop: 4 }}>* Livraison entre 1 000 et 2 000 FCFA confirmée par notre équipe</Text>
               )}
             </View>
 
             <View style={s.padBox}>
-              <Text style={s.padTitle}>ðŸ’° Paiement Ã  la livraison</Text>
+              <Text style={s.padTitle}>
+                {delivMode === "boutique" ? "💳 Paiement en boutique" : "💰 Paiement à la livraison"}
+              </Text>
               <Text style={s.padText}>
-                Vous ne payez rien maintenant. Notre livreur arrive avec votre commande. Vous vÃ©rifiez, vous acceptez, vous payez en espÃ¨ces.
+                {delivMode === "boutique"
+                  ? "Vous ne payez rien maintenant. Vous paierez directement en boutique au moment du retrait. Aucun frais de livraison ne sera facturé."
+                  : "Vous ne payez rien maintenant. Notre livreur arrive avec votre commande. Vous vérifiez, vous acceptez, vous payez en espèces."}
               </Text>
             </View>
 
             {earnPoints > 0 && (
               <View style={s.pointsPrev}>
                 <Feather name="star" size={13} color="#FF6B00" />
-                <Text style={s.pointsPrevTxt}> Vous gagnerez <Text style={{ fontWeight: "800" }}>{earnPoints} points KDO</Text> aprÃ¨s livraison</Text>
+                <Text style={s.pointsPrevTxt}> Vous gagnerez <Text style={{ fontWeight: "800" }}>{earnPoints} points KDO</Text> après {delivMode === "boutique" ? "votre retrait en boutique" : "votre livraison"}</Text>
               </View>
             )}
           </View>
         )}
       </ScrollView>
 
-      {/* Footer CTA â€” positionnÃ© AU-DESSUS de la barre de navigation */}
+      {/* Footer CTA — positionné AU-DESSUS de la barre de navigation */}
       <View style={[s.footer, { bottom: TAB_H }]}>
         {step === "cart" && (
           <View style={s.footerInfo}>
@@ -782,9 +793,9 @@ export default function CartScreen() {
             ? <ActivityIndicator color="#fff" />
             : <Text style={s.ctaTxt}>
                 {step === "cart"     ? "Commander maintenant"
-                 : step === "info"     ? "Continuer â†’"
-                 : step === "delivery" ? "Voir le rÃ©capitulatif â†’"
-                 : "âœ“ Confirmer â€” Payer Ã  la livraison"}
+                 : step === "info"     ? "Continuer →"
+                 : step === "delivery" ? "Voir le récapitulatif →"
+                 : "✓ Confirmer — Payer à la livraison"}
               </Text>
           }
         </TouchableOpacity>
@@ -793,7 +804,7 @@ export default function CartScreen() {
   );
 }
 
-// â”€â”€â”€ Styles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Styles ───────────────────────────────────────────────────────────────────
 const s = StyleSheet.create({
   root: { flex: 1, backgroundColor: "#F7F8FA" },
 
