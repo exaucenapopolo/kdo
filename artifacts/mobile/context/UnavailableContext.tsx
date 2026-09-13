@@ -6,6 +6,7 @@ import React, {
   useState,
 } from "react";
 import { AppState, type AppStateStatus } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const API_ORIGIN =
   process.env.EXPO_PUBLIC_API_URL ||
@@ -14,6 +15,8 @@ const API_ORIGIN =
 const API_BASE = API_ORIGIN.replace(/\/+$/, "").endsWith("/api")
   ? API_ORIGIN.replace(/\/+$/, "")
   : `${API_ORIGIN.replace(/\/+$/, "")}/api`;
+
+const STORAGE_KEY = "@kdo/unavailable-products/v1";
 
 export interface UnavailableEntry {
   productId: string;
@@ -39,12 +42,6 @@ interface UnavailableContextType {
 const UnavailableContext =
   createContext<UnavailableContextType | null>(null);
 
-/**
- * Normalise une ville pour éviter les problèmes de :
- * - majuscules/minuscules
- * - accents
- * - espaces accidentels
- */
 function normalizeCity(city: string | null | undefined): string {
   return String(city ?? "")
     .normalize("NFD")
@@ -53,17 +50,17 @@ function normalizeCity(city: string | null | undefined): string {
     .toLowerCase();
 }
 
-/**
- * Les IDs de produits doivent rester identiques à leur valeur serveur,
- * mais on retire les espaces accidentels.
- */
 function normalizeProductId(productId: string | number): string {
   return String(productId).trim();
 }
 
-/**
- * Transforme proprement la réponse API en tableau exploitable.
- */
+function normalizeEntry(entry: UnavailableEntry): UnavailableEntry {
+  return {
+    productId: normalizeProductId(entry.productId),
+    city: String(entry.city ?? "").trim(),
+  };
+}
+
 function normalizeEntries(value: unknown): UnavailableEntry[] {
   if (!Array.isArray(value)) {
     return [];
@@ -82,11 +79,44 @@ function normalizeEntries(value: unknown): UnavailableEntry[] {
         "productId" in entry &&
         "city" in entry
     )
-    .map((entry) => ({
-      productId: normalizeProductId(entry.productId),
-      city: String(entry.city ?? "").trim(),
-    }))
-    .filter((entry) => entry.productId.length > 0 && entry.city.length > 0);
+    .map((entry) =>
+      normalizeEntry({
+        productId: String(entry.productId),
+        city: String(entry.city),
+      })
+    )
+    .filter(
+      (entry) =>
+        entry.productId.length > 0 &&
+        entry.city.length > 0
+    );
+}
+
+async function readLocalEntries(): Promise<UnavailableEntry[]> {
+  try {
+    const raw = await AsyncStorage.getItem(STORAGE_KEY);
+
+    if (!raw) {
+      return [];
+    }
+
+    return normalizeEntries(JSON.parse(raw));
+  } catch {
+    return [];
+  }
+}
+
+async function writeLocalEntries(
+  entries: UnavailableEntry[]
+): Promise<void> {
+  try {
+    await AsyncStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(entries.map(normalizeEntry))
+    );
+  } catch {
+    // Le stockage local ne doit jamais empêcher l'application de fonctionner.
+  }
 }
 
 export function UnavailableProvider({
@@ -94,32 +124,46 @@ export function UnavailableProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [unavailableEntries, setUnavailableEntries] = useState<
-    UnavailableEntry[]
-  >([]);
+  const [unavailableEntries, setUnavailableEntries] =
+    useState<UnavailableEntry[]>([]);
 
   /**
-   * Recharge la source de vérité du serveur.
-   *
-   * Important :
-   * une erreur réseau ne vide PAS la liste déjà connue.
+   * Recharge d'abord le cache local pour que l'état soit immédiatement
+   * disponible, même sans réseau.
    */
+  useEffect(() => {
+    let mounted = true;
+
+    void readLocalEntries().then((entries) => {
+      if (mounted && entries.length > 0) {
+        setUnavailableEntries(entries);
+      }
+    });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   const reload = useCallback(async () => {
     try {
       const controller = new AbortController();
 
-      const timeout = setTimeout(() => {
+      const timeoutId = setTimeout(() => {
         controller.abort();
       }, 6000);
 
       try {
-        const response = await fetch(`${API_BASE}/admin/unavailable`, {
-          method: "GET",
-          headers: {
-            Accept: "application/json",
-          },
-          signal: controller.signal,
-        });
+        const response = await fetch(
+          `${API_BASE}/admin/unavailable`,
+          {
+            method: "GET",
+            headers: {
+              Accept: "application/json",
+            },
+            signal: controller.signal,
+          }
+        );
 
         if (!response.ok) {
           return;
@@ -128,51 +172,54 @@ export function UnavailableProvider({
         const data = await response.json();
 
         if (Array.isArray(data?.unavailable)) {
-          setUnavailableEntries(
-            normalizeEntries(data.unavailable)
+          const entries = normalizeEntries(
+            data.unavailable
           );
+
+          setUnavailableEntries(entries);
+          await writeLocalEntries(entries);
         }
       } finally {
-        clearTimeout(timeout);
+        clearTimeout(timeoutId);
       }
     } catch {
       /**
-       * Ne rien faire :
-       * l'état précédent reste affiché si Internet/API est temporairement
-       * indisponible.
+       * Important :
+       * une panne réseau ne doit jamais effacer une indisponibilité
+       * déjà mémorisée localement.
        */
     }
   }, []);
 
   /**
-   * Chargement initial + synchronisation lorsque l'app revient
-   * au premier plan.
+   * Au lancement :
+   * 1. cache local
+   * 2. serveur
+   *
+   * Puis resynchronisation à chaque retour au premier plan.
    */
   useEffect(() => {
     void reload();
 
-    const handleAppStateChange = (state: AppStateStatus) => {
+    const handleAppStateChange = (
+      state: AppStateStatus
+    ) => {
       if (state === "active") {
         void reload();
       }
     };
 
-    const subscription = AppState.addEventListener(
-      "change",
-      handleAppStateChange
-    );
+    const subscription =
+      AppState.addEventListener(
+        "change",
+        handleAppStateChange
+      );
 
     return () => {
       subscription.remove();
     };
   }, [reload]);
 
-  /**
-   * Marquer un produit comme indisponible.
-   *
-   * L'interface est immédiatement mise à jour.
-   * Si le serveur refuse l'opération, on restaure l'état précédent.
-   */
   const markUnavailable = useCallback(
     async (
       productId: string,
@@ -181,31 +228,34 @@ export function UnavailableProvider({
     ) => {
       const normalizedProductId =
         normalizeProductId(productId);
-      const normalizedCity = normalizeCity(city);
 
-      const previousEntries = unavailableEntries;
+      const normalizedCity =
+        city.trim();
 
-      setUnavailableEntries((entries) => {
-        const alreadyExists = entries.some(
-          (entry) =>
-            normalizeProductId(entry.productId) ===
-              normalizedProductId &&
-            (normalizeCity(entry.city) === normalizedCity ||
-              normalizeCity(entry.city) === "*")
-        );
+      const previous =
+        unavailableEntries;
 
-        if (alreadyExists) {
-          return entries;
-        }
+      const nextEntries = unavailableEntries.some(
+        (entry) =>
+          normalizeProductId(entry.productId) ===
+            normalizedProductId &&
+          (
+            normalizeCity(entry.city) ===
+              normalizeCity(normalizedCity) ||
+            normalizeCity(entry.city) === "*"
+          )
+      )
+        ? unavailableEntries
+        : [
+            ...unavailableEntries,
+            {
+              productId: normalizedProductId,
+              city: normalizedCity,
+            },
+          ];
 
-        return [
-          ...entries,
-          {
-            productId: normalizedProductId,
-            city: city.trim(),
-          },
-        ];
-      });
+      setUnavailableEntries(nextEntries);
+      await writeLocalEntries(nextEntries);
 
       try {
         const response = await fetch(
@@ -218,7 +268,7 @@ export function UnavailableProvider({
             },
             body: JSON.stringify({
               productId: normalizedProductId,
-              city: city.trim(),
+              city: normalizedCity,
               adminEmail,
             }),
           }
@@ -229,32 +279,28 @@ export function UnavailableProvider({
           .catch(() => null);
 
         if (!response.ok) {
-          setUnavailableEntries(previousEntries);
+          setUnavailableEntries(previous);
+          await writeLocalEntries(previous);
           return;
         }
 
-        /**
-         * Après succès, le serveur devient la source de vérité.
-         */
         if (Array.isArray(data?.unavailable)) {
-          setUnavailableEntries(
-            normalizeEntries(data.unavailable)
-          );
+          const serverEntries =
+            normalizeEntries(data.unavailable);
+
+          setUnavailableEntries(serverEntries);
+          await writeLocalEntries(serverEntries);
+        } else {
+          await reload();
         }
       } catch {
-        setUnavailableEntries(previousEntries);
+        setUnavailableEntries(previous);
+        await writeLocalEntries(previous);
       }
     },
-    [unavailableEntries]
+    [unavailableEntries, reload]
   );
 
-  /**
-   * Remettre un produit disponible.
-   *
-   * Même logique :
-   * suppression immédiate dans l'interface,
-   * puis rollback si le serveur refuse.
-   */
   const markAvailable = useCallback(
     async (
       productId: string,
@@ -263,32 +309,36 @@ export function UnavailableProvider({
     ) => {
       const normalizedProductId =
         normalizeProductId(productId);
-      const normalizedCity = normalizeCity(city);
 
-      const previousEntries = unavailableEntries;
+      const normalizedCity =
+        city.trim();
 
-      setUnavailableEntries((entries) =>
-        entries.filter((entry) => {
-          const sameProduct =
-            normalizeProductId(entry.productId) ===
-            normalizedProductId;
+      const previous =
+        unavailableEntries;
 
-          const sameCity =
-            normalizeCity(entry.city) === normalizedCity;
+      const nextEntries =
+        unavailableEntries.filter(
+          (entry) => {
+            const sameProduct =
+              normalizeProductId(entry.productId) ===
+              normalizedProductId;
 
-          const globalUnavailable =
-            normalizeCity(entry.city) === "*";
+            const sameCity =
+              normalizeCity(entry.city) ===
+              normalizeCity(normalizedCity);
 
-          /**
-           * On ne retire que l'indisponibilité correspondant
-           * au produit + à la ville demandée.
-           */
-          return !(
-            sameProduct &&
-            (sameCity || globalUnavailable)
-          );
-        })
-      );
+            const globalCity =
+              normalizeCity(entry.city) === "*";
+
+            return !(
+              sameProduct &&
+              (sameCity || globalCity)
+            );
+          }
+        );
+
+      setUnavailableEntries(nextEntries);
+      await writeLocalEntries(nextEntries);
 
       try {
         const response = await fetch(
@@ -303,7 +353,7 @@ export function UnavailableProvider({
             },
             body: JSON.stringify({
               adminEmail,
-              city: city.trim(),
+              city: normalizedCity,
             }),
           }
         );
@@ -313,30 +363,28 @@ export function UnavailableProvider({
           .catch(() => null);
 
         if (!response.ok) {
-          setUnavailableEntries(previousEntries);
+          setUnavailableEntries(previous);
+          await writeLocalEntries(previous);
           return;
         }
 
-        /**
-         * Le serveur reste la source de vérité après succès.
-         */
         if (Array.isArray(data?.unavailable)) {
-          setUnavailableEntries(
-            normalizeEntries(data.unavailable)
-          );
+          const serverEntries =
+            normalizeEntries(data.unavailable);
+
+          setUnavailableEntries(serverEntries);
+          await writeLocalEntries(serverEntries);
+        } else {
+          await reload();
         }
       } catch {
-        setUnavailableEntries(previousEntries);
+        setUnavailableEntries(previous);
+        await writeLocalEntries(previous);
       }
     },
-    [unavailableEntries]
+    [unavailableEntries, reload]
   );
 
-  /**
-   * Détermine si un produit est indisponible pour une ville.
-   *
-   * Une entrée "*" signifie indisponible dans toutes les villes.
-   */
   const isUnavailable = useCallback(
     (
       productId: string,
@@ -348,22 +396,24 @@ export function UnavailableProvider({
       const normalizedCity =
         normalizeCity(city);
 
-      return unavailableEntries.some((entry) => {
-        if (
-          normalizeProductId(entry.productId) !==
-          normalizedProductId
-        ) {
-          return false;
+      return unavailableEntries.some(
+        (entry) => {
+          if (
+            normalizeProductId(entry.productId) !==
+            normalizedProductId
+          ) {
+            return false;
+          }
+
+          const entryCity =
+            normalizeCity(entry.city);
+
+          return (
+            entryCity === "*" ||
+            entryCity === normalizedCity
+          );
         }
-
-        const entryCity =
-          normalizeCity(entry.city);
-
-        return (
-          entryCity === "*" ||
-          entryCity === normalizedCity
-        );
-      });
+      );
     },
     [unavailableEntries]
   );
@@ -384,7 +434,8 @@ export function UnavailableProvider({
 }
 
 export function useUnavailable() {
-  const context = useContext(UnavailableContext);
+  const context =
+    useContext(UnavailableContext);
 
   if (!context) {
     throw new Error(
@@ -393,4 +444,4 @@ export function useUnavailable() {
   }
 
   return context;
-      }
+    }
